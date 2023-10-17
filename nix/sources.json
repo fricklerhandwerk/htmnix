@@ -1,0 +1,38 @@
+{
+    "nix-unit": {
+        "branch": "main",
+        "description": null,
+        "homepage": null,
+        "owner": "adisbladis",
+        "repo": "nix-unit",
+        "rev": "3ed2378bddad85257fc508a291408f9ed9673d01",
+        "sha256": "0d62lbh0vx6z295bqpzsiz3ik5gqklyy5riixxvjqqa66b8jmwqy",
+        "type": "tarball",
+        "url": "https://github.com/adisbladis/nix-unit/archive/3ed2378bddad85257fc508a291408f9ed9673d01.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgs": {
+        "branch": "nixos-23.05",
+        "description": "Nix Packages collection & NixOS",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "898cb2064b6e98b8c5499f37e81adbdf2925f7c5",
+        "sha256": "0ha53gbglrcnpzfc4lwzgyvlsagvm1m2q9z5i5b4nfahplnqpsbj",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/898cb2064b6e98b8c5499f37e81adbdf2925f7c5.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgs-unstable": {
+        "branch": "2a5f6cac357616d2596167d0631b4ca729e9a3ea",
+        "description": "Nix Packages collection & NixOS",
+        "homepage": "",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "2a5f6cac357616d2596167d0631b4ca729e9a3ea",
+        "sha256": "1r7yj7nbd1bmxvnpvphgfqmwx3ba6y26386a72l9z6xlzsxbi0fj",
+        "type": "tarball",
+        "url": "https://github.com/nixos/nixpkgs/archive/2a5f6cac357616d2596167d0631b4ca729e9a3ea.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    }
+}
