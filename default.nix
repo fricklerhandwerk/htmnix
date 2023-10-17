@@ -10,7 +10,7 @@ let
   renderDocument = doc: ''
     <html>
     <meta>
-      <title>${doc.title}</doc>
+      <title>${doc.meta.title}</title>
     </meta>
     </html>
   '';
