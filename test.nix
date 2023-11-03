@@ -34,7 +34,7 @@ in
             config = {
               documents.first.head.title = "first";
               documents.second.head.title = "second";
-              documents.second.head.links = [ "hello" "world" ];
+              documents.second.head.links = [ "test" config.documents.first ];
             };
           };
         site = renderer.eval [ input ];
@@ -44,8 +44,8 @@ in
       <html>
         <head>
           <title>second</title>
-          <link href="hello" rel="canonical">
-          <link href="world" rel="canonical">
+          <link href="test" rel="canonical">
+          <link href="/first.html" rel="canonical">
         </head>
         <body>
         </body>

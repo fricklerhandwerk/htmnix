@@ -40,6 +40,12 @@ in
         in
         {
           options = {
+            outPath = with lib; mkOption {
+              type = types.str;
+              description = "the relative path of this document within the site";
+              internal = true;
+              default = head config.documents.${name}.redirects;
+            };
             contents = with lib; mkOption {
               description = "the document rendered as a string";
               type = types.str;
@@ -50,6 +56,11 @@ in
                   </body>
                 </html>
               '';
+            };
+            redirects = with lib; mkOption {
+              description = "historical locations of this document";
+              type = with types; listOf path;
+              default = [ "/${name}.html" ];
             };
             head = with lib; mkOption {
               description = "document metadata";
