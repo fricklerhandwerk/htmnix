@@ -1,5 +1,7 @@
+# tests written for `nix-unit`
+# https://github.com/nix-community/nix-unit
 let
-  renderer = import ./. { };
+  inherit ((import ./. { }).lib) htmnix;
 in
 {
   testSimple = {
@@ -9,7 +11,7 @@ in
           {
             documents.myDocument.html.head.title = "test hello";
           };
-        site = renderer.eval [ input ];
+        site = htmnix [ input ];
       in
       site.config.documents.myDocument.out;
     expected = ''
@@ -30,7 +32,7 @@ in
           {
             documents.myDocument = { };
           };
-        site = renderer.eval [ input ];
+        site = htmnix [ input ];
       in
       site.config.documents.myDocument.out;
     expected = ''
@@ -51,7 +53,7 @@ in
           {
             documents.myDocument.title = "foo";
           };
-        site = renderer.eval [ input ];
+        site = htmnix [ input ];
       in
       site.config.documents.myDocument.out;
     expected = ''
@@ -76,7 +78,7 @@ in
               { attrs = { href = config.documents.first; rel = "canonical"; }; }
             ];
           };
-        site = renderer.eval [ input ];
+        site = htmnix [ input ];
       in
       site.config.documents.second.out;
     expected = ''
@@ -102,7 +104,7 @@ in
               { attrs = { href = config.documents.first; rel = "canonical"; }; }
             ];
           };
-        site = renderer.eval [ input ];
+        site = htmnix [ input ];
       in
       site.config.documents.second.out;
     expected = ''

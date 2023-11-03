@@ -6,14 +6,14 @@ let
     srcDir = inputs.nix-unit;
     nix = pkgs-unstable.nixUnstable;
   });
-  eval = modules: pkgs.lib.evalModules {
+in
+{
+  lib.htmnix = modules: pkgs.lib.evalModules {
     class = "htmnix";
     modules = modules ++ [ (import ./modules/document.nix) ];
   };
-in
-{
-  inherit eval;
-  devShells.default = pkgs.mkShell {
+
+  shell = pkgs.mkShell {
     packages = [
       nix-unit
     ];
