@@ -4,7 +4,7 @@ A HTML rendering engine implemented in the Nix module system.
 
 ## Wait, what?
 
-Yes indeed! It's the HTML standard implemented all over again, but with Nix modules.
+Yes indeed! It's the Document Object Model (DOM) implemented all over again, but with Nix modules.
 
 ## But why?
 
@@ -37,5 +37,5 @@ Check [`test.nix`](./test.nix) for examples of what one can do with `htmnix`.
    nix-unit test.nix
    ```
 
-1. Add more [HTML data structures](https://developer.mozilla.org/en-US/docs/Web/HTML) to [`modules/element.nix`](./modules/element.nix) and test that they work.
+1. Add more [HTML data structures](https://developer.mozilla.org/en-US/docs/Web/HTML) to [`lib/dom.nix`](./lib/dom.nix) and test that they work.
 
