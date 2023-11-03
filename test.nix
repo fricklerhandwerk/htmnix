@@ -5,12 +5,9 @@ in
   testSimple = {
     expr =
       let
-        input = { site, ... }:
-          # shorthand module
+        input = { ... }:
           {
-            config = {
-              documents.myDocument.html.head.title = "test hello";
-            };
+            documents.myDocument.html.head.title = "test hello";
           };
         site = renderer.eval [ input ];
       in
@@ -29,16 +26,13 @@ in
     expr =
       let
         input = { config, ... }:
-          # shorthand module
           {
-            config = {
-              documents.first.html.head.title = "first";
-              documents.second.html.head.title = "second";
-              documents.second.html.head.links = [
-                { attrs = { href = "test"; rel = "stylesheet"; }; }
-                { attrs = { href = config.documents.first; rel = "canonical"; }; }
-              ];
-            };
+            documents.first.html.head.title = "first";
+            documents.second.html.head.title = "second";
+            documents.second.html.head.links = [
+              { attrs = { href = "test"; rel = "stylesheet"; }; }
+              { attrs = { href = config.documents.first; rel = "canonical"; }; }
+            ];
           };
         site = renderer.eval [ input ];
       in
