@@ -17,6 +17,11 @@ in
               type = element.html;
               description = "The <html> HTML element represents the root (top-level element) of an HTML document, so it is also referred to as the root element. All other elements must be descendants of this element.";
             };
+            title = lib.mkOption {
+              description = "Title of the document. Defaults to the document's attribute name if not set. This is a convenience wrapper around `html.head.title`.";
+              type = with types; nullOr str;
+              default = "${name}";
+            };
             redirects = with lib; mkOption {
               description = "Historical locations of this document. Prepend new locations to this list.";
               type = with types; listOf path;
@@ -31,6 +36,9 @@ in
               type = with types; str;
               default = "${self.html}";
             };
+          };
+          config = {
+            html.head.title = lib.mkOptionDefault self.title;
           };
         }));
     };
