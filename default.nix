@@ -7,20 +7,13 @@ let
     specialArgs = { inherit (pkgs) lib; };
     modules = modules ++ [ (import ./modules/document.nix) ];
   };
-  renderDocument = doc: ''
-    <html>
-    <meta>
-      <title>${doc.meta.title}</title>
-    </meta>
-    </html>
-  '';
   nix-unit = (pkgs-unstable.callPackage inputs.nix-unit {
     srcDir = inputs.nix-unit;
     nix = pkgs-unstable.nixUnstable;
   });
 in
 {
-  inherit eval renderDocument;
+  inherit eval;
   devShells.default = pkgs.mkShell {
     packages = [
       nix-unit

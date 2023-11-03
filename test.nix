@@ -14,7 +14,7 @@ in
           };
         site = renderer.eval [ input ];
       in
-      renderer.renderDocument site.config.documents.myDocument;
+      site.config.documents.myDocument.contents;
     expected = ''
       <html>
       <meta>
