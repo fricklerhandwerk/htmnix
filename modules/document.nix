@@ -1,34 +1,6 @@
 { config, lib, ... }:
 let
-  inherit (builtins)
-    concatStringsSep
-    filter
-    head
-    isList
-    replaceStrings
-    split
-    tail
-    ;
-
-  replaceStringsRec = from: to: string:
-    # recursively replace occurrences of `from` with `to` within `string`
-    # example:
-    #     replaceStringRec "--" "-" "hello-----world"
-    #     => "hello-world"
-    let
-      replaced = replaceStrings [ from ] [ to ] string;
-    in
-    if replaced == string then string else replaceStringsRec from to replaced;
-
-  squash = replaceStringsRec "\n\n" "\n";
-
-  splitLines = with lib; s: filter (x: !isList x) (split "\n" s);
-
-  indent = prefix: s:
-    let
-      lines = splitLines s;
-    in
-    concatStringsSep "\n" ([ (head lines) ] ++ (map (x: if x == "" then x else "${prefix}${x}") (tail lines)));
+  util = import ../util.nix { inherit lib; };
   element = import ./element.nix { inherit lib; };
 in
 {
@@ -50,9 +22,9 @@ in
             contents = with lib; mkOption {
               description = "the document rendered as a string";
               type = types.str;
-              default = squash ''
+              default = util.squash ''
                 <html>
-                  ${indent "  " self.head.contents}
+                  ${util.indent "  " "${self.head}"}
                   <body>
                   </body>
                 </html>
@@ -64,29 +36,8 @@ in
               default = [ "/${name}.html" ];
             };
             head = with lib; mkOption {
-              description = "document metadata";
-              type = types.submodule {
-                options = {
-                  contents = with lib; mkOption {
-                    description = "the <head> tag rendered as a string";
-                    type = types.str;
-                    default = ''
-                      <head>
-                        <title>${self.head.title}</title>
-                      ${concatStringsSep "\n" (map (s: "  ${s}") self.head.links)}
-                      </head>
-                    '';
-                  };
-                  title = with lib; mkOption {
-                    description = "document title";
-                    type = types.str;
-                  };
-                  links = with lib; mkOption {
-                    type = types.listOf element.link;
-                    default = [ ];
-                  };
-                };
-              };
+              description = "The <title> HTML element defines the document's title that is shown in a browser's title bar or a page's tab. It only contains text; tags within the element are ignored.";
+              type = element.head;
             };
           };
         }));

@@ -1,6 +1,30 @@
 # HTML elements encoded as modules
 { lib, ... }:
-{
+let
+  util = import ../util.nix { inherit lib; };
+in
+rec {
+  head = with lib; types.submodule {
+    options = {
+      title = mkOption {
+        description = "The <title> HTML element defines the document's title that is shown in a browser's title bar or a page's tab. It only contains text; tags within the element are ignored.";
+        type = types.str;
+      };
+      links = mkOption {
+        type = types.listOf link;
+        default = [ ];
+      };
+      __toString = with lib; mkOption {
+        type = with types; functionTo str;
+        default = self: util.squash ''
+          <head>
+            <title>${self.title}</title>
+          ${concatStringsSep "\n" (map (s: "  ${s}") self.links)}
+          </head>
+        '';
+      };
+    };
+  };
   link = with lib; types.submodule {
     options = {
       attrs = {
