@@ -4,6 +4,36 @@ let
   util = import ../util.nix { inherit lib; };
 in
 rec {
+  document = lib.types.submodule ({ name, config, ... }: {
+    options = {
+      html = with lib; mkOption {
+        type = html;
+        description = "The <html> HTML element represents the root (top-level element) of an HTML document, so it is also referred to as the root element. All other elements must be descendants of this element.";
+      };
+      title = lib.mkOption {
+        description = "Title of the document. Defaults to the document's attribute name if not set. This is a convenience wrapper around `html.head.title`.";
+        type = with lib.types; nullOr str;
+        default = "${name}";
+      };
+      redirects = with lib; mkOption {
+        description = "Historical locations of this document. Prepend new locations to this list.";
+        type = with lib.types; listOf path;
+        default = [ "/${name}.html" ];
+      };
+      outPath = with lib; mkOption {
+        internal = true;
+        type = types.str;
+        default = lib.lists.head config.redirects;
+      };
+      out = with lib; mkOption {
+        type = types.str;
+        default = "${config.html}";
+      };
+    };
+    config = {
+      html.head.title = lib.mkOptionDefault config.title;
+    };
+  });
   html = with lib; types.submodule {
     options = {
       head = mkOption {
@@ -32,7 +62,7 @@ rec {
         type = types.listOf link;
         default = [ ];
       };
-      __toString = with lib; mkOption {
+      __toString = mkOption {
         type = with types; functionTo str;
         default = self: util.squash ''
           <head>

@@ -1,46 +1,12 @@
 { config, lib, ... }:
 let
-  util = import ../util.nix { inherit lib; };
   element = import ./element.nix { inherit lib; };
 in
 {
   options = {
     documents = with lib; mkOption {
-      description = "a document";
-      type = types.attrsOf (types.submodule ({ name, ... }:
-        let
-          self = config.documents.${name};
-        in
-        {
-          options = {
-            html = with lib; mkOption {
-              type = element.html;
-              description = "The <html> HTML element represents the root (top-level element) of an HTML document, so it is also referred to as the root element. All other elements must be descendants of this element.";
-            };
-            title = lib.mkOption {
-              description = "Title of the document. Defaults to the document's attribute name if not set. This is a convenience wrapper around `html.head.title`.";
-              type = with types; nullOr str;
-              default = "${name}";
-            };
-            redirects = with lib; mkOption {
-              description = "Historical locations of this document. Prepend new locations to this list.";
-              type = with types; listOf path;
-              default = [ "/${name}.html" ];
-            };
-            outPath = with lib; mkOption {
-              internal = true;
-              type = types.str;
-              default = lib.lists.head self.redirects;
-            };
-            out = with lib; mkOption {
-              type = with types; str;
-              default = "${self.html}";
-            };
-          };
-          config = {
-            html.head.title = lib.mkOptionDefault self.title;
-          };
-        }));
+      description = "A Document represents any web page loaded in the browser and serves as an entry point into the web page's content.";
+      type = types.attrsOf element.document;
     };
   };
 }
