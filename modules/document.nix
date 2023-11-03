@@ -61,12 +61,20 @@ in
                     default = ''
                       <head>
                         <title>${self.head.title}</title>
+                      ${(concatStringsSep "\n"
+                        (map (s: "  " + ''<link href="${s}" rel="canonical">'') self.head.links)
+                       )}
                       </head>
                     '';
                   };
                   title = with lib; mkOption {
                     description = "document title";
                     type = types.str;
+                  };
+                  links = with lib; mkOption {
+                    description = "links";
+                    type = types.listOf (types.either types.path types.str);
+                    default = [ ];
                   };
                 };
               };
