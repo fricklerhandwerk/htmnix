@@ -1,7 +1,7 @@
 # The Documente Object Model (DOM) encoded as modules
 { lib, ... }:
 let
-  util = import ../util.nix { inherit lib; };
+  util = import ./util.nix { inherit lib; };
 in
 rec {
   document = { name, config, ... }: {

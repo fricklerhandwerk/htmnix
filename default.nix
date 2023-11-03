@@ -10,7 +10,7 @@ in
 {
   lib.htmnix = modules: pkgs.lib.evalModules {
     class = "htmnix";
-    modules = modules ++ [ (import ./lib/site.nix) ];
+    modules = modules ++ [ (import ./lib) ];
   };
 
   shell = pkgs.mkShell {
