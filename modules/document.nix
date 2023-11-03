@@ -13,31 +13,23 @@ in
         in
         {
           options = {
-            outPath = with lib; mkOption {
-              type = types.str;
-              description = "the relative path of this document within the site";
-              internal = true;
-              default = head config.documents.${name}.redirects;
-            };
-            contents = with lib; mkOption {
-              description = "the document rendered as a string";
-              type = types.str;
-              default = util.squash ''
-                <html>
-                  ${util.indent "  " "${self.head}"}
-                  <body>
-                  </body>
-                </html>
-              '';
+            html = with lib; mkOption {
+              type = element.html;
+              description = "The <html> HTML element represents the root (top-level element) of an HTML document, so it is also referred to as the root element. All other elements must be descendants of this element.";
             };
             redirects = with lib; mkOption {
-              description = "historical locations of this document";
+              description = "Historical locations of this document. Prepend new locations to this list.";
               type = with types; listOf path;
               default = [ "/${name}.html" ];
             };
-            head = with lib; mkOption {
-              description = "The <title> HTML element defines the document's title that is shown in a browser's title bar or a page's tab. It only contains text; tags within the element are ignored.";
-              type = element.head;
+            outPath = with lib; mkOption {
+              internal = true;
+              type = types.str;
+              default = lib.lists.head self.redirects;
+            };
+            out = with lib; mkOption {
+              type = with types; str;
+              default = "${self.html}";
             };
           };
         }));

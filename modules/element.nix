@@ -4,6 +4,24 @@ let
   util = import ../util.nix { inherit lib; };
 in
 rec {
+  html = with lib; types.submodule {
+    options = {
+      head = mkOption {
+        description = "The <title> HTML element defines the document's title that is shown in a browser's title bar or a page's tab. It only contains text; tags within the element are ignored.";
+        type = head;
+      };
+      __toString = with lib; mkOption {
+        type = with types; functionTo str;
+        default = self: util.squash ''
+          <html>
+            ${util.indent "  " "${self.head}"}
+            <body>
+            </body>
+          </html>
+        '';
+      };
+    };
+  };
   head = with lib; types.submodule {
     options = {
       title = mkOption {

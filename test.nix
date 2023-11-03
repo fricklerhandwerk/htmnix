@@ -9,12 +9,12 @@ in
           # shorthand module
           {
             config = {
-              documents.myDocument.head.title = "test hello";
+              documents.myDocument.html.head.title = "test hello";
             };
           };
         site = renderer.eval [ input ];
       in
-      site.config.documents.myDocument.contents;
+      site.config.documents.myDocument.out;
     expected = ''
       <html>
         <head>
@@ -32,9 +32,9 @@ in
           # shorthand module
           {
             config = {
-              documents.first.head.title = "first";
-              documents.second.head.title = "second";
-              documents.second.head.links = [
+              documents.first.html.head.title = "first";
+              documents.second.html.head.title = "second";
+              documents.second.html.head.links = [
                 { attrs = { href = "test"; rel = "stylesheet"; }; }
                 { attrs = { href = config.documents.first; rel = "canonical"; }; }
               ];
@@ -42,7 +42,7 @@ in
           };
         site = renderer.eval [ input ];
       in
-      site.config.documents.second.contents;
+      site.config.documents.second.out;
     expected = ''
       <html>
         <head>
