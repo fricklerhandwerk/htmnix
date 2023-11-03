@@ -4,41 +4,28 @@ let
   util = import ../util.nix { inherit lib; };
 in
 rec {
-  document = lib.types.submodule ({ name, config, ... }: {
-    options = {
-      html = with lib; mkOption {
-        type = html;
+  document = { name, config, ... }: {
+    options = with lib; {
+      html = mkOption {
+        type = types.submodule html;
         description = "The <html> HTML element represents the root (top-level element) of an HTML document, so it is also referred to as the root element. All other elements must be descendants of this element.";
       };
-      title = lib.mkOption {
-        description = "Title of the document. Defaults to the document's attribute name if not set. This is a convenience wrapper around `html.head.title`.";
-        type = with lib.types; nullOr str;
-        default = "${name}";
-      };
-      redirects = with lib; mkOption {
-        description = "Historical locations of this document. Prepend new locations to this list.";
-        type = with lib.types; listOf path;
-        default = [ "/${name}.html" ];
-      };
-      outPath = with lib; mkOption {
+      outPath = mkOption {
         internal = true;
         type = types.str;
-        default = lib.lists.head config.redirects;
+        default = "/${name}.html";
       };
-      out = with lib; mkOption {
+      out = mkOption {
         type = types.str;
         default = "${config.html}";
       };
     };
-    config = {
-      html.head.title = lib.mkOptionDefault config.title;
-    };
-  });
-  html = with lib; types.submodule {
-    options = {
+  };
+  html = { ... }: {
+    options = with lib; {
       head = mkOption {
         description = "The <title> HTML element defines the document's title that is shown in a browser's title bar or a page's tab. It only contains text; tags within the element are ignored.";
-        type = head;
+        type = types.submodule head;
       };
       __toString = with lib; mkOption {
         type = with types; functionTo str;
@@ -52,14 +39,14 @@ rec {
       };
     };
   };
-  head = with lib; types.submodule {
-    options = {
+  head = { ... }: {
+    options = with lib; {
       title = mkOption {
         description = "The <title> HTML element defines the document's title that is shown in a browser's title bar or a page's tab. It only contains text; tags within the element are ignored.";
         type = types.str;
       };
       links = mkOption {
-        type = types.listOf link;
+        type = with types; listOf (submodule link);
         default = [ ];
       };
       __toString = mkOption {
@@ -73,8 +60,8 @@ rec {
       };
     };
   };
-  link = with lib; types.submodule {
-    options = {
+  link = { ... }: {
+    options = with lib; {
       attrs = {
         href = mkOption {
           description = "This attribute specifies the URL of the linked resource.";
@@ -88,7 +75,7 @@ rec {
           ]);
         };
       };
-      __toString = with lib; mkOption {
+      __toString = mkOption {
         type = with types; functionTo str;
         default = self:
           ''<link ${concatStringsSep " " (lib.attrsets.mapAttrsToList (attr: value: ''${attr}="${value}"'') self.attrs)} />'';
