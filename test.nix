@@ -118,4 +118,30 @@ in
       </html>
     '';
   };
+
+  testHostDir = {
+    expr =
+      let
+        input = { config, ... }:
+          {
+            hostDir = "/foo/bar";
+            documents.first = { };
+            documents.second.html.head.links = [
+              { attrs = { href = config.documents.first; rel = "canonical"; }; }
+            ];
+          };
+        site = htmnix [ input ];
+      in
+      site.config.documents.second.out;
+    expected = ''
+      <html>
+        <head>
+          <title>second</title>
+          <link href="/foo/bar/first.html" rel="canonical" />
+        </head>
+        <body>
+        </body>
+      </html>
+    '';
+  };
 }

@@ -30,4 +30,11 @@ rec {
       lines = splitLines s;
     in
     concatStringsSep "\n" ([ (head lines) ] ++ (map (x: if x == "" then x else "${prefix}${x}") (tail lines)));
+
+  stringCoercible = with lib; mkOptionType {
+    name = "path";
+    descriptionClass = "noun";
+    check = strings.isStringLike;
+    merge = options.mergeEqualOption;
+  };
 }

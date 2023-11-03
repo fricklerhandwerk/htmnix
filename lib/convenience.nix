@@ -18,6 +18,6 @@ rec {
       type = with lib.types; listOf path;
       default = [ "/${name}.html" ];
     };
-    config.outPath = lib.lists.head config.redirects;
+    config.outPath = lib.mkDefault (lib.lists.head config.redirects);
   };
 }

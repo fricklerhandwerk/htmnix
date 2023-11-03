@@ -65,7 +65,7 @@ rec {
       attrs = {
         href = mkOption {
           description = "This attribute specifies the URL of the linked resource.";
-          type = with types; nullOr (either path str);
+          type = with types; nullOr util.stringCoercible;
         };
         rel = mkOption {
           description = "This attribute names a relationship of the linked document to the current document.";
