@@ -9,7 +9,7 @@ in
           # shorthand module
           {
             config = {
-              documents.myDocument.meta.title = "test hello";
+              documents.myDocument.head.title = "test hello";
             };
           };
         site = renderer.eval [ input ];
@@ -17,9 +17,11 @@ in
       site.config.documents.myDocument.contents;
     expected = ''
       <html>
-      <meta>
-        <title>test hello</title>
-      </meta>
+        <head>
+          <title>test hello</title>
+        </head>
+        <body>
+        </body>
       </html>
     '';
   };
