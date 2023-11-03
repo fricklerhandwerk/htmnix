@@ -29,6 +29,7 @@ let
       lines = splitLines s;
     in
     concatStringsSep "\n" ([ (head lines) ] ++ (map (x: if x == "" then x else "${prefix}${x}") (tail lines)));
+  element = import ./element.nix { inherit lib; };
 in
 {
   options = {
@@ -72,9 +73,7 @@ in
                     default = ''
                       <head>
                         <title>${self.head.title}</title>
-                      ${(concatStringsSep "\n"
-                        (map (s: "  " + ''<link href="${s}" rel="canonical">'') self.head.links)
-                       )}
+                      ${concatStringsSep "\n" (map (s: "  ${s}") self.head.links)}
                       </head>
                     '';
                   };
@@ -83,8 +82,7 @@ in
                     type = types.str;
                   };
                   links = with lib; mkOption {
-                    description = "links";
-                    type = types.listOf (types.either types.path types.str);
+                    type = types.listOf element.link;
                     default = [ ];
                   };
                 };

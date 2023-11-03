@@ -34,7 +34,10 @@ in
             config = {
               documents.first.head.title = "first";
               documents.second.head.title = "second";
-              documents.second.head.links = [ "test" config.documents.first ];
+              documents.second.head.links = [
+                { attrs = { href = "test"; rel = "stylesheet"; }; }
+                { attrs = { href = config.documents.first; rel = "canonical"; }; }
+              ];
             };
           };
         site = renderer.eval [ input ];
@@ -44,8 +47,8 @@ in
       <html>
         <head>
           <title>second</title>
-          <link href="test" rel="canonical">
-          <link href="/first.html" rel="canonical">
+          <link href="test" rel="stylesheet" />
+          <link href="/first.html" rel="canonical" />
         </head>
         <body>
         </body>
