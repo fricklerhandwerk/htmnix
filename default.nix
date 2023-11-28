@@ -14,8 +14,9 @@ in
   };
 
   shell = pkgs.mkShell {
-    packages = [
+    packages = with pkgs; [
       nix-unit
+      entr
     ];
   };
 }

@@ -39,3 +39,11 @@ Check [`test.nix`](./test.nix) for examples of what one can do with `htmnix`.
 
 1. Add more [HTML data structures](https://developer.mozilla.org/en-US/docs/Web/HTML) to [`lib/dom.nix`](./lib/dom.nix) and test that they work.
 
+  > **Tip**
+  >
+  > Run tests in a loop:
+  >
+  > ```console
+  > find . | entr nix-unit test.nix
+  > ```
+
