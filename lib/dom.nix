@@ -78,7 +78,7 @@ rec {
       __toString = mkOption {
         type = with types; functionTo str;
         default = self:
-          ''<link ${concatStringsSep " " (lib.attrsets.mapAttrsToList (attr: value: ''${attr}="${value}"'') self.attrs)} />'';
+          ''<link ${util.toAttrs self.attrs} />'';
       };
     };
   };
