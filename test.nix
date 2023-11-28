@@ -9,7 +9,7 @@ in
       let
         input = { ... }:
           {
-            documents.myDocument.html.head.title = "test hello";
+            documents.myDocument.html.head.title = "hello world";
           };
         site = htmnix [ input ];
       in
@@ -17,7 +17,7 @@ in
     expected = ''
       <html>
         <head>
-          <title>test hello</title>
+          <title>hello world</title>
         </head>
         <body>
         </body>
