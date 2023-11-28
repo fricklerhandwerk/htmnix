@@ -1,4 +1,4 @@
-# The Documente Object Model (DOM) encoded as modules
+# The Document Object Model (DOM) encoded as modules
 { lib, ... }:
 let
   util = import ./util.nix { inherit lib; };
