@@ -37,4 +37,7 @@ rec {
     check = strings.isStringLike;
     merge = options.mergeEqualOption;
   };
+
+  toAttrs = attrs: concatStringsSep " "
+    (lib.attrsets.mapAttrsToList (attr: value: ''${attr}="${value}"'') attrs);
 }
