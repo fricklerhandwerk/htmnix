@@ -1,7 +1,7 @@
 # tests written for `nix-unit`
 # https://github.com/nix-community/nix-unit
 let
-  inherit ((import ./. { }).lib) htmnix;
+  inherit ((import ./. { }).lib) htmnix tags;
 in
 {
   testSimple = {
@@ -140,6 +140,32 @@ in
           <link href="/foo/bar/first.html" rel="canonical" />
         </head>
         <body>
+        </body>
+      </html>
+    '';
+  };
+
+  testBody = {
+    expr =
+      let
+        input = { ... }:
+          {
+            documents.myDocument.html.body.children = with tags; [
+              "hello"
+              (p.plain { } "world")
+            ];
+          };
+        site = htmnix [ input ];
+      in
+      site.config.documents.myDocument.out;
+    expected = ''
+      <html>
+        <head>
+          <title>myDocument</title>
+        </head>
+        <body>
+          hello
+          <p>world</p>
         </body>
       </html>
     '';

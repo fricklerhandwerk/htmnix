@@ -13,6 +13,8 @@ in
     modules = modules ++ [ (import ./lib) ];
   };
 
+  lib.tags = import ./lib/tags.nix;
+
   shell = pkgs.mkShell {
     packages = with pkgs; [
       nix-unit

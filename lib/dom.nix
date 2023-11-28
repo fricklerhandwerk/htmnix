@@ -27,15 +27,44 @@ rec {
         description = "The <title> HTML element defines the document's title that is shown in a browser's title bar or a page's tab. It only contains text; tags within the element are ignored.";
         type = types.submodule head;
       };
+      body = mkOption {
+        description = "The <body> HTML element represents the content of an HTML document. There can be only one <body> element in a document.";
+        type = types.oneOf [ types.str (types.submodule body) ];
+        default = "<body>\n</body>";
+      };
       __toString = with lib; mkOption {
         type = with types; functionTo str;
         default = self: util.squash ''
           <html>
             ${util.indent "  " "${self.head}"}
-            <body>
-            </body>
+            ${util.indent "  " "${self.body}"}
           </html>
         '';
+      };
+    };
+  };
+  body = { ... }: {
+    options = with lib; {
+      children = mkOption {
+        description = ''
+          Flow content is a broad category that encompasses most elements that can go inside the `<body>` element, including heading elements, sectioning elements, phrasing elements, embedding elements, interactive elements, and form-related elements.
+          It also includes text nodes (but not those that only consist of white space characters).
+        '';
+        type = with types; listOf (oneOf [
+          str
+          (submodule p)
+        ]);
+        default = [ ];
+      };
+      __toString = mkOption {
+        type = with types; functionTo str;
+        default = self: util.squash ''
+          <body>
+            ${
+              util.indent "  "
+                (concatStringsSep "\n" (map (x: "${x}") self.children))
+            }
+          </body>'';
       };
     };
   };
@@ -79,6 +108,24 @@ rec {
         type = with types; functionTo str;
         default = self:
           ''<link ${util.toAttrs self.attrs} />'';
+      };
+    };
+  };
+  p = { ... }: {
+    options = with lib; {
+      attrs = { };
+      children = mkOption {
+        description = "Phrasing content";
+        type = with types; listOf (oneOf [
+          str
+          (submodule p)
+        ]);
+      };
+      __toString = mkOption {
+        type = with types; functionTo str;
+        default = self: ''
+          <p>${concatStringsSep " " (map (x: "${x}") self.children)}</p>
+        '';
       };
     };
   };
