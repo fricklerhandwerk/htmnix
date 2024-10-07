@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Fediversity</title>
+    <link>//localhost:1313/</link>
+    <description>Recent content on Fediversity</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 17 Sep 2024 05:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Nordunet Conference 2024</title>
+      <link>//localhost:1313/blog/nordunet-conference-2024/</link>
+      <pubDate>Tue, 17 Sep 2024 05:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/nordunet-conference-2024/</guid>
+      <description>Fediversity was represented in Bergen at the Nordunet Conference for 2024, with both the Internet Discourse Foundation and Nordunet themselves being present.</description>
+    </item>
+    <item>
+      <title>Fediversity Tech Session</title>
+      <link>//localhost:1313/blog/fediversity-tech-session/</link>
+      <pubDate>Mon, 05 Aug 2024 05:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/fediversity-tech-session/</guid>
+      <description>Recently Fediversity hosted a tech session on NixOS and Kubernetes. We invited people within the community to discuss some design considerations of the Fediversity project with us.</description>
+    </item>
+    <item>
+      <title>PublicSpaces Conference 2024</title>
+      <link>//localhost:1313/blog/publicspaces-conference/</link>
+      <pubDate>Tue, 30 Jul 2024 05:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/publicspaces-conference/</guid>
+      <description>PublicSpaces and Waag Futurelabs recently held their yearly conference in Amsterdam, titled &amp;lsquo;Taking Back the Internet&amp;rsquo;.</description>
+    </item>
+    <item>
+      <title>Fediversity new website launch</title>
+      <link>//localhost:1313/blog/new-website-launch/</link>
+      <pubDate>Wed, 15 May 2024 05:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/new-website-launch/</guid>
+      <description>We are pleased to introduce the launch of our new website dedicated to the Fediversity project.</description>
+    </item>
+    <item>
+      <title>PublicSpaces Conference 2024</title>
+      <link>//localhost:1313/events/publicspaces-annual-conference/</link>
+      <pubDate>Sat, 11 May 2024 14:00:00 +0200</pubDate>
+      <guid>//localhost:1313/events/publicspaces-annual-conference/</guid>
+      <description>w On June 6th and 7th, PublicSpaces and Waag Futurelab proudly present the fourth edition of the PublicSpaces conference under the theme &amp;lsquo;Empowering the Internet&amp;rsquo;.</description>
+    </item>
+    <item>
+      <title>OW2con 2024</title>
+      <link>//localhost:1313/events/owc-annual-conference-2024/</link>
+      <pubDate>Sat, 11 May 2024 09:00:00 +0000</pubDate>
+      <guid>//localhost:1313/events/owc-annual-conference-2024/</guid>
+      <description>OW2con is the European open source conference organized by OW2. An international meeting of developpers, IT companies, academics and non-profit organizations, OW2con brings together the entire open source community, during two days of presentations ranging from tech topics to business and ethical issues of open source.</description>
+    </item>
+    <item>
+      <title>State of the Internet 2024</title>
+      <link>//localhost:1313/events/waag-state-internet-2024/</link>
+      <pubDate>Wed, 10 Apr 2024 16:00:00 +0000</pubDate>
+      <guid>//localhost:1313/events/waag-state-internet-2024/</guid>
+      <description>Join us at the State of the Internet 2024, where Waag Futurelab, alongside the Municipality of Amsterdam and the OBA, delves into the depths of the online realm.</description>
+    </item>
+    <item>
+      <title>Fediversity Project publicly announced</title>
+      <link>//localhost:1313/blog/project-launch/</link>
+      <pubDate>Mon, 01 Jan 2024 05:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/project-launch/</guid>
+      <description>The Consortium behind the Fediversity project announces that the project has officially been started.</description>
+    </item>
+    <item>
+      <title>Consortium</title>
+      <link>//localhost:1313/consortium/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/consortium/</guid>
+      <description>Information about the project. TODO.</description>
+    </item>
+    <item>
+      <title>Developers</title>
+      <link>//localhost:1313/developers/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/developers/</guid>
+      <description>The Fediversity Project enables easy hosting for a wide variety of fediverse platforms, all based on NixOS.</description>
+    </item>
+    <item>
+      <title>European Commission</title>
+      <link>//localhost:1313/ec/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/ec/</guid>
+      <description>The Fediversity project implements the visions outlined by the Next Generation Internet (NGI) initiative for an open internet in several ways.</description>
+    </item>
+    <item>
+      <title>Fediversity</title>
+      <link>//localhost:1313/fediversity/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/fediversity/</guid>
+      <description>Fediversity is a comprehensive effort to bring easy-to-use, hosted cloud services with service portability and personal freedom at their core to everyone.</description>
+    </item>
+    <item>
+      <title>Grants</title>
+      <link>//localhost:1313/grants/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/grants/</guid>
+      <description>Fediversity invites other people to join this ambitious development effort. It is a vast domain with many more challenges than what any preconceived effort could tackle by itself.</description>
+    </item>
+    <item>
+      <title>Individuals</title>
+      <link>//localhost:1313/individuals/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/individuals/</guid>
+      <description>The fediverse shows great potential in fundamentally rethinking how we approach the internet.</description>
+    </item>
+    <item>
+      <title>Laurens Hof</title>
+      <link>//localhost:1313/authors/laurens-hof/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/authors/laurens-hof/</guid>
+      <description>Story teller for the Fediversity Project.</description>
+    </item>
+    <item>
+      <title>NLnet</title>
+      <link>//localhost:1313/nlnet/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/nlnet/</guid>
+      <description>The NLnet Foundation supports organisations and people who contribute to an open internet for all.</description>
+    </item>
+    <item>
+      <title>NORDUnet</title>
+      <link>//localhost:1313/nordunet/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/nordunet/</guid>
+      <description>NORDUnet is a collaboration of the National Research and Education Networks of the Nordic countries connecting universities and research institutions across Denmark, Finland, Iceland, Norway, and Sweden.</description>
+    </item>
+    <item>
+      <title>Open Internet Discourse Foundation</title>
+      <link>//localhost:1313/oid/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/oid/</guid>
+      <description>The Open Internet Discourse Foundation (OID) is founded on the belief that everyone deserves the freedom to express themselves and use the internet without constraints, and is committed to help build a better internet where individuals can truly be who they are.</description>
+    </item>
+    <item>
+      <title>Privacy</title>
+      <link>//localhost:1313/privacy-policy/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/privacy-policy/</guid>
+      <description>The Fediversity website does not track you, and does not process any of your data.</description>
+    </item>
+    <item>
+      <title>Ready to build your next project with Hugo?</title>
+      <link></link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid></guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Tweag</title>
+      <link>//localhost:1313/tweag/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/tweag/</guid>
+      <description>Tweag is the open source program office (OSPO) of Modus Create, a global digital consulting firm that helps enterprises build competitive advantage through digital innovation.</description>
+    </item>
+    <item>
+      <title>What Users Are Saying About Hugoplate</title>
+      <link></link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid></guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>

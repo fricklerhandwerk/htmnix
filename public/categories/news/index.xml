@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>News on Fediversity</title>
+    <link>//localhost:1313/categories/news/</link>
+    <description>Recent content in News on Fediversity</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 05 Aug 2024 05:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/categories/news/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Fediversity Tech Session</title>
+      <link>//localhost:1313/blog/fediversity-tech-session/</link>
+      <pubDate>Mon, 05 Aug 2024 05:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/fediversity-tech-session/</guid>
+      <description>Recently Fediversity hosted a tech session on NixOS and Kubernetes. We invited people within the community to discuss some design considerations of the Fediversity project with us.</description>
+    </item>
+    <item>
+      <title>Nordunet Conference 2024</title>
+      <link>//localhost:1313/blog/nordunet-conference-2024/</link>
+      <pubDate>Tue, 30 Jul 2024 05:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/nordunet-conference-2024/</guid>
+      <description>Fediversity was represented at the Nordunet Conference for 2024, with both the Internet Discourse Foundation and Nordunet themselves being present.</description>
+    </item>
+    <item>
+      <title>PublicSpaces Conference 2024</title>
+      <link>//localhost:1313/blog/publicspaces-conference/</link>
+      <pubDate>Tue, 30 Jul 2024 05:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/publicspaces-conference/</guid>
+      <description>PublicSpaces and Waag Futurelabs recently held their yearly conference in Amsterdam, titled &amp;lsquo;Taking Back the Internet&amp;rsquo;.</description>
+    </item>
+    <item>
+      <title>Fediversity new website launch</title>
+      <link>//localhost:1313/blog/new-website-launch/</link>
+      <pubDate>Wed, 15 May 2024 05:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/new-website-launch/</guid>
+      <description>We are pleased to introduce the launch of our new website dedicated to the Fediversity project.</description>
+    </item>
+    <item>
+      <title>Fediversity Project publicly announced</title>
+      <link>//localhost:1313/blog/project-launch/</link>
+      <pubDate>Mon, 01 Jan 2024 05:00:00 +0000</pubDate>
+      <guid>//localhost:1313/blog/project-launch/</guid>
+      <description>The Consortium behind the Fediversity project announces that the project has officially been started.</description>
+    </item>
+  </channel>
+</rss>
