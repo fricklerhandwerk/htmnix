@@ -65,6 +65,17 @@ rec {
     in
     join "/" relativeComponents;
 
+  /**
+    Recursively list all Nix files from a directory, except the top-level `default.nix`
+
+    Useful for module system `imports` from a top-level module.
+  **/
+  nixFiles = dir: with lib.fileset;
+    toList (difference
+      (fileFilter ({ hasExt, ... }: hasExt "nix") dir)
+      (dir + "/default.nix")
+    );
+
   types = rec {
     collection = elemType:
       let
