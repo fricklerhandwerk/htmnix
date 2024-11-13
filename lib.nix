@@ -1,5 +1,51 @@
 { pkgs, lib, ... }:
+let
+  join = lib.concatStringsSep;
+in
 rec {
+  /**
+    Build the web site
+  */
+  site = name: dir:
+    let
+      script = ''
+        mkdir $out
+      '' + join "\n" copy;
+      copy = lib.mapAttrsToList
+        (
+          path: document: ''
+            mkdir -p $out/$(dirname ${path})
+            cp ${document} $out/${path}
+          ''
+        )
+        (files (sources dir));
+    in
+    pkgs.runCommand name { } script;
+
+  /**
+    Get source files from a flat directory
+  */
+  sources = dir: lib.mapAttrs'
+    (
+      attrname: value: {
+        name = lib.removeSuffix ".nix" attrname;
+        value = import (dir + "/${attrname}");
+      }
+    )
+    (builtins.readDir dir);
+
+  /**
+    Create a mapping from output file path to document contents
+  */
+  files = documents: lib.mapAttrs'
+    (
+      name: document: {
+        name = document.outPath;
+        value = html document "${name}.html";
+      }
+    )
+    documents;
+
   /**
     Convert a Nix document to HTML
   */
@@ -22,25 +68,4 @@ rec {
     pkgs.runCommand "${name}.html" { buildInputs = [ pkgs.cmark ]; } ''
       cmark ${builtins.toFile "${name}.md" markdown} > $out
     '';
-
-  /**
-    Get documents from a flat directory of files
-  */
-  documents = dir: lib.mapAttrs'
-    (
-      attrname: value: {
-        name = lib.removeSuffix ".nix" attrname;
-        value = import (dir + "/${attrname}");
-      }
-    )
-    (builtins.readDir dir);
-
-  files = dir: lib.mapAttrs'
-    (
-      name: document: {
-        name = document.outPath;
-        value = html document "${name}.html";
-      }
-    )
-    (documents dir);
 }
