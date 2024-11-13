@@ -46,6 +46,8 @@ in
         default = target: with lib; "${relativePath (head config.locations) (head target.locations)}.html";
       };
       outputs = mkOption {
+        # TODO: figure out how to make this overridable at any granularity.
+        #       it should be possible with the DOM module now.
         description = ''
           Representations of the document in different formats
         '';

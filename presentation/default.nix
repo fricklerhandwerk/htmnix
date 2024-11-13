@@ -5,6 +5,14 @@ let
     types
     ;
   templates = import ./templates.nix { inherit lib; };
+  render-html = document:
+    let
+      eval = lib.evalModules {
+        class = "DOM";
+        modules = [ document (import ./dom.nix { inherit lib; }).document ];
+      };
+    in
+    toString eval.config;
 in
 {
   options.templates =
@@ -38,30 +46,38 @@ in
     in
     {
       nav = lib.mkDefault templates.nav;
-      page = lib.mkDefault (config: page: templates.html {
-        head = ''
-          <title>${page.title}</title>
-          <meta name="description" content="${page.description}" />
-          <link rel="canonical" href="${lib.head page.locations}" />
-        '';
-        body = ''
-          ${config.menus.main.outputs.html page}
-          ${builtins.readFile (commonmark page.name page.body)}
-        '';
+      page = lib.mkDefault (config: page: render-html {
+        html = {
+          head = {
+            title.text = page.title;
+            meta.description = page.description;
+            link.canonical = lib.head page.locations;
+          };
+          body.content = ''
+            ${config.menus.main.outputs.html page}
+
+            <h1>${page.title}</h1>
+
+            ${builtins.readFile (commonmark page.name page.body)}
+          '';
+        };
       });
-      article = lib.mkDefault (config: page: templates.html {
-        head = ''
-          <title>${page.title}</title>
-          <meta name="description" content="${page.description}" />
-          ${with lib; join "\n" (map
-          (author: ''<meta name="author" content="${author}" />'')
-          (if isList page.author then page.author else [page.author]))
-          }
-        '';
-        body = ''
-          ${config.menus.main.outputs.html page}
-          ${builtins.readFile (commonmark page.name page.body)}
-        '';
+      article = lib.mkDefault (config: page: render-html {
+        html = {
+          head = {
+            title.text = page.title;
+            meta.description = page.description;
+            meta.authors = if lib.isList page.author then page.author else [ page.author ];
+            link.canonical = lib.head page.locations;
+          };
+          body.content = ''
+            ${config.menus.main.outputs.html page}
+
+            <h1>${page.title}</h1>
+
+            ${builtins.readFile (commonmark page.name page.body)}
+          '';
+        };
       });
     };
 
