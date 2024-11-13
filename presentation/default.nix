@@ -31,6 +31,7 @@ in
         # TODO: reconsider using `page.outPath` and what to put into `locations`.
         #       maybe we can avoid having ".html" suffixes there.
         #       since templates can output multiple files, `html` is merely one of many things we *could* produce.
+        # TODO: maybe it would even make sense to split routing and rendering altogether
         ${page.outPath} = builtins.toFile "${page.name}.html" (templates.html {
           head = ''
             <title>${page.title}</title>
