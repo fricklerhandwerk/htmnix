@@ -9,6 +9,7 @@
 let
   cfg = config;
   inherit (lib) mkOption types;
+  inherit (types) submodule;
 
   # https://html.spec.whatwg.org/multipage/dom.html#content-models
   # https://html.spec.whatwg.org/multipage/dom.html#kinds-of-content
@@ -43,7 +44,7 @@ let
 
   # options with types for all the defined DOM elements
   element-types = lib.mapAttrs
-    (name: value: mkOption { type = types.submodule value; })
+    (name: value: mkOption { type = submodule value; })
     elements;
 
   # attrset of categories, where values are module options with the type of the
@@ -52,7 +53,7 @@ let
     genAttrs
       content-categories
       (category:
-        (mapAttrs (_: e: mkOption { type = types.submodule e; })
+        (mapAttrs (_: e: mkOption { type = submodule e; })
           # HACK: don't evaluate the submodule types, just grab the config directly
           (filterAttrs (_: e: elem category (e { name = "dummy"; config = { }; }).config.categories) elements))
       );
@@ -118,7 +119,7 @@ let
 
   mkAttrs = attrs: with lib;
     mkOption {
-      type = types.submodule {
+      type = submodule {
         options = global-attrs // attrs;
       };
       default = { };
@@ -147,11 +148,20 @@ let
 
   print-element = name: attrs: content:
     with lib;
+    # TODO: be smarter about content to save some space and repetition at the call sites
     squash (trim ''
       <${name}${print-attrs attrs}>
         ${lib.indent "  " content}
       </${name}>
     '');
+
+  toString-unwrap = e:
+    with lib;
+    if isAttrs e
+    then toString (head (attrValues e))
+    else if isList e
+    then toString (map toString-unwrap e)
+    else e;
 
   elements = rec {
     document = { ... }: {
@@ -206,7 +216,7 @@ let
         # https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag#viewport_width_and_screen_width
         # this should not exist and no one should ever have to think about it
         meta.viewport = mkOption {
-          type = types.submodule ({ ... }: {
+          type = submodule ({ ... }: {
             # TODO: figure out how to render only non-default values
             options = {
               width = mkOption {
@@ -422,21 +432,13 @@ let
 
       config.categories = [ ];
       config.__toString = self: with lib;
-        print-element name self.attrs (
-          join "\n" (map
-            (e:
-              if isAttrs e
-              then toString (lib.head (attrValues e))
-              else e
-            )
-            self.content)
-        );
+        print-element name self.attrs (join "\n" (map toString-unwrap self.content));
     };
 
     section = { config, name, ... }: {
       imports = [ element ];
       options = {
-        # setting to an attribute set will wrap the section in <section>
+        # setting to an attribute set will wrap the section in `<section>`
         attrs = mkOption {
           type = with types; nullOr (submodule { options = global-attrs; });
           default = null;
@@ -450,14 +452,18 @@ let
           #      such an outline is rather meaningless without headings for navigation,
           #      which is why we enforce headings in sections.
           #      arguably, and this is encoded here, a section *is defined* by its heading.
-          type = with types; submodule ({ ... }: {
+          type = with types; submodule ({ config, ... }: {
             imports = [ element ];
             options = {
               attrs = mkAttrs { };
-              # TODO: make `before`/`after` wrap the heading in `<hgroup>` if non-empty
+              # setting to an attribute set will wrap the section in `<hgroup>`
+              hgroup.attrs = mkOption {
+                type = with types; nullOr (submodule { options = global-attrs; });
+                default = with lib; mkIf (!isNull config.before || !isNull config.after) { };
+              };
               # https://html.spec.whatwg.org/multipage/sections.html#the-hgroup-element
               before = mkOption {
-                type = with types; listOf (attrTag ({ inherit p; } // categories.scripting));
+                type = with types; listOf (attrTag ({ inherit (element-types) p; } // categories.scripting));
                 default = [ ];
               };
               content = mkOption {
@@ -466,7 +472,7 @@ let
               };
               after = mkOption {
                 type = with types;
-                  listOf (attrTag ({ inherit p; } // categories.scripting));
+                  listOf (attrTag ({ inherit (element-types) p; } // categories.scripting));
                 default = [ ];
               };
             };
@@ -489,19 +495,31 @@ let
         __toString = self: with lib;
           let
             n = toString config.heading-level;
-            content = ''<h${n}${print-attrs self.heading.attrs}>${self.heading.content}</h${n}>
-              '' + join "\n" (map
-              (e:
-                if isAttrs e
-                then toString (lib.head (attrValues e))
-                else e
-              )
-              self.content);
+            heading = ''<h${n}${print-attrs self.heading.attrs}>${self.heading.content}</h${n}>'';
+            hgroup = with lib; print-element "hgroup" self.heading.hgroup.attrs (squash ''
+              ${optionalString (!isNull self.heading.before) (toString-unwrap self.heading.before)}
+              ${heading}
+              ${optionalString (!isNull self.heading.after) (toString-unwrap self.heading.after)}
+            '');
+            content = if isNull self.heading.hgroup.attrs then heading else hgroup
+              + join "\n" (map toString-unwrap self.content);
           in
           if !isNull self.attrs
           then print-element name self.attrs content
           else content;
       };
+    };
+
+    p = { name, ... }: {
+      imports = [ element ];
+      options = {
+        attrs = mkAttrs { };
+        content = mkOption {
+          type = with types; either str (listOf (attrTag categories.phrasing));
+        };
+      };
+      config.categories = [ "flow" "palpable" ];
+      config.__toString = self: print-element name self.attrs (toString self.content);
     };
   };
 in

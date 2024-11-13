@@ -27,17 +27,21 @@ in
       };
     };
     config.name = lib.slug config.title;
-    config.outputs.html = lib.mkForce (cfg.templates.html.dom {
+    config.outputs.html = lib.mkForce ((cfg.templates.html.page config).override {
       html = {
-        head = {
-          title.text = config.title;
-          meta.description = config.description;
-          meta.authors = if lib.isList config.author then config.author else [ config.author ];
-          link.canonical = lib.head config.locations;
-        };
-        body.content = [
+        # TODO: make authors always a list
+        head.meta.authors = if lib.isList config.author then config.author else [ config.author ];
+        body.content = lib.mkForce [
           (cfg.menus.main.outputs.html config)
-          { section.heading.content = config.title; }
+          {
+            section.heading = {
+              # TODO: i18n support
+              # TODO: structured dates
+              before = [{ p.content = "Published ${config.date}"; }];
+              content = config.title;
+              after = [{ p.content = "Written by ${config.author}"; }];
+            };
+          }
           (cfg.templates.html.markdown { inherit (config) name body; })
         ];
       };
