@@ -147,11 +147,11 @@ let
 
   print-element = name: attrs: content:
     with lib;
-    lib.squash ''
+    squash (trim ''
       <${name}${print-attrs attrs}>
         ${lib.indent "  " content}
       </${name}>
-    '';
+    '');
 
   elements = rec {
     document = { ... }: {
