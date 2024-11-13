@@ -557,7 +557,14 @@ let
           }));
         };
       };
-      config.categories = [ "flow" ] ++ [ "palpable" ];
+      # XXX: here we can't express the spec requirement that `dl` is palpable if the list of term-description-pairs is nonempty.
+      #      the reason is that we have to specify a child's *type* in the parent, but being palpable is a property of the value in this case.
+      #      and while the module system does have some dependent typing capabilities, we can't say "the type is X but only if its value has property Y".
+      #      but since the "palpable" category isn't used in any structural requirement in the spec, this is not a loss of fidelity on our side.
+      # TODO: the whole notion of content categories may be a red herring for this implementation after all, reconsider it.
+      #       it does help to concisely express type constraints on an element's children, but it seems that most of the categories in the spec can be ignored entirely in this implementation.
+      #       the cleanup task would be to identify which categories are really helpful, and document the rationale for using that mechanism as well as the specific choice of categories to keep.
+      config.categories = [ "flow" ];
       config.__toString = self:
         with lib;
         let
