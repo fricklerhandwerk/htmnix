@@ -46,6 +46,11 @@ let
           '';
           type = with types; nonEmptyListOf str;
         };
+        link = mkOption {
+          description = "Helper function for transparent linking to other pages";
+          type = with types; functionTo str;
+          default = target: "TODO: compute the relative path based on `locations`";
+        };
         outPath = mkOption {
           description = ''
             Location of the page, used for transparently creating links
@@ -128,6 +133,7 @@ in
     '';
     type = with types; attrsOf (functionTo (functionTo options.files.type));
   };
+  # TODO: split out templates and all related helper junk into `../presentation`
   config.templates =
     let
       commonmark = name: markdown: pkgs.runCommand "${name}.html"
@@ -140,6 +146,9 @@ in
     {
       page = lib.mkDefault (config: page: {
         # TODO: create static redirects from `tail page.locations`
+        # TODO: reconsider using `page.outPath` and what to put into `locations`.
+        #       maybe we can avoid having ".html" suffixes there.
+        #       since templates can output multiple files, `html` is merely one of many things we *could* produce.
         ${page.outPath} = builtins.toFile "${page.name}.html" ''
           <html>
           <head>
