@@ -36,7 +36,15 @@ rec {
   splitLines = s: with builtins; filter (x: !isList x) (split "\n" s);
 
   indent = prefix: s:
-    join "\n" (map (x: if x == "" then x else "${prefix}${x}") (splitLines s));
+    with lib.lists;
+    let
+      lines = splitLines s;
+    in
+    join "\n" (
+      [ (head lines) ]
+      ++
+      (map (x: if x == "" then x else "${prefix}${x}") (tail lines))
+    );
 
   types = rec {
     collection = elemType:
