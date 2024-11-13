@@ -46,6 +46,25 @@ rec {
       (map (x: if x == "" then x else "${prefix}${x}") (tail lines))
     );
 
+  relativePath = path1': path2':
+    let
+      inherit (lib.path) subpath;
+      inherit (lib) lists;
+
+      path1 = subpath.components path1';
+      path2 = subpath.components path2';
+
+      commonPrefixLength = with lists;
+        findFirstIndex (i: i.fst != i.snd)
+          { fst = null; snd = null; }
+          (zipLists path1 path2);
+
+      relativeComponents = with lists;
+        [ "." ] ++ (replicate (length path1 - commonPrefixLength - 1) "..") ++
+        (drop commonPrefixLength path2);
+    in
+    join "/" relativeComponents;
+
   types = rec {
     collection = elemType:
       let

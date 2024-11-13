@@ -14,7 +14,8 @@ in
     };
   };
   config.content-types = {
-    document = { name, config, ... }: {
+    document = { name, config, link, ... }: {
+      config._module.args.link = config.link;
       options = {
         name = mkOption {
           description = "Symbolic name, used as a human-readable identifier";
@@ -37,7 +38,7 @@ in
         link = mkOption {
           description = "Helper function for transparent linking to other pages";
           type = with types; functionTo str;
-          default = target: "TODO: compute the relative path based on `locations`";
+          default = target: with lib; relativePath (head config.locations) (head target.locations);
         };
         # TODO: may not need it when using `link`; could repurpose it to render the default template
         outPath = mkOption {
