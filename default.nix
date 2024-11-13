@@ -17,7 +17,7 @@ let
   # TODO: update when the PR to expose `pkgs.devmode` is merged
   #       https://github.com/NixOS/nixpkgs/pull/354556
   devmode = pkgs.callPackage "${sources.devmode-reusable}/pkgs/by-name/de/devmode/package.nix" {
-    buildArgs = "${toString ./.} -A build";
+    buildArgs = "${toString ./.} -A build --show-trace";
     open = "/index.html";
   };
 in
