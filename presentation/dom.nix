@@ -136,7 +136,7 @@ let
             if isBool value then
               if value then name else ""
             # TODO: some attributes must be explicitly empty
-            else optionalString (toString value != "") ''${name}=${value}''
+            else optionalString (toString value != "") ''${name}="${toString value}"''
           )
           attrs)
       );
