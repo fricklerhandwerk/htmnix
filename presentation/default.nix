@@ -4,6 +4,7 @@ let
     mkOption
     types
     ;
+  templates = import ./templates.nix { inherit lib; };
 in
 {
   options.templates = mkOption {
@@ -30,46 +31,25 @@ in
         # TODO: reconsider using `page.outPath` and what to put into `locations`.
         #       maybe we can avoid having ".html" suffixes there.
         #       since templates can output multiple files, `html` is merely one of many things we *could* produce.
-        ${page.outPath} = builtins.toFile "${page.name}.html" ''
-          <html>
-          <head>
-          <meta charset="utf-8" />
-          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-          <title>${page.title}</title>
-          <meta name="description" content="${page.description}" />
-          <link rel="canonical" href="${page.outPath}" />
-          </head>
-          <body>
-          ${lib.indent "  " (builtins.readFile (commonmark page.name page.body))}
-          <body>
-          </html>
-        '';
+        ${page.outPath} = builtins.toFile "${page.name}.html" (templates.html {
+          head = ''
+            <title>${page.title}</title>
+            <meta name="description" content="${page.description}" />
+            <link rel="canonical" href="${page.outPath}" />
+          '';
+          body = builtins.readFile (commonmark page.name page.body);
+        });
       });
       article = lib.mkDefault (config: page: {
         # TODO: create static redirects from `tail page.locations`
-        ${page.outPath} = builtins.toFile "${page.name}.html" ''
-          <html>
-          <head>
-          <meta charset="utf-8" />
-          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-          <title>${page.title}</title>
-          <meta name="description" content="${page.description}" />
-          ${with lib;
-            if ! isNull page.author then
-            ''<meta name="author" content="${if isList page.author then join ", " page.author else page.author}" />''
-            else ""
-          }
-          <link rel="canonical" href="${page.outPath}" />
-          </head>
-          <body>
-          ${lib.indent "  " (builtins.readFile (commonmark page.name page.body))}
-          <body>
-          </html>
-        '';
+        ${page.outPath} = builtins.toFile "${page.name}.html" (templates.html {
+          head = ''
+            <title>${page.title}</title>
+            <meta name="description" content="${page.description}" />
+            <meta name="author" content="${with lib; if isList page.author then join ", " page.author else page.author}" />
+          '';
+          body = builtins.readFile (commonmark page.name page.body);
+        });
       });
     };
 
