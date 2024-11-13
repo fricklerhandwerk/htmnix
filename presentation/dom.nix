@@ -26,14 +26,6 @@ let
     "scripting" # https://html.spec.whatwg.org/multipage/dom.html#script-supporting-elements
   ];
 
-  get-section-depth = content: with lib; foldl'
-    (acc: elem:
-      if isAttrs elem
-      then max acc (lib.head (attrValues elem)).section-depth
-      else acc # TODO: parse with e.g. https://github.com/remarkjs/remark to avoid raw strings
-    ) 0
-    content;
-
   # base type for all DOM elements
   element = { ... }: {
     # TODO: add fields for upstream documentation references
@@ -46,15 +38,6 @@ let
         internal = true;
         type = with types; functionTo str;
       };
-    };
-  };
-
-  # TODO: rename to something about sectioning
-  content-element = { ... }: {
-    options.section-depth = mkOption {
-      type = types.ints.unsigned;
-      default = 0;
-      internal = true;
     };
   };
 
@@ -369,18 +352,74 @@ let
     };
 
     body = { config, name, ... }: {
-      imports = [ element content-element ];
+      imports = [ element ];
       options = {
         attrs = mkAttrs { };
         content = mkOption {
           type = with types;
+            let
+              # Type check that ensures spec-compliant section hierarchy
+              # https://html.spec.whatwg.org/multipage/sections.html#headings-and-outlines-2:concept-heading-7
+              with-section-constraints = baseType: baseType // {
+                merge = loc: defs:
+                  with lib;
+                  let
+                    find-and-attach = def:
+                      let
+                        process-with-depth = depth: content:
+                          map
+                            (x:
+                              if isAttrs x && x ? section && x.section ? heading
+                              then x // {
+                                section = x.section // {
+                                  heading-level = depth;
+                                  content = process-with-depth (depth + 1) (x.section.content or [ ]);
+                                };
+                              }
+                              else x
+                            )
+                            content;
+
+                        find-with-depth = depth: content:
+                          let
+                            sections = map (v: { inherit (def) file; value = v; depth = depth; })
+                              (filter (x: isAttrs x && x ? section && x.section ? heading) content);
+                            subsections = concatMap
+                              (x:
+                                if isAttrs x && x ? section && x.section ? content
+                                then find-with-depth (depth + 1) x.section.content
+                                else [ ])
+                              content;
+                          in
+                          sections ++ subsections;
+
+                      in
+                      {
+                        inherit def;
+                        processed = process-with-depth 1 def.value;
+                        validation = find-with-depth 1 def.value;
+                      };
+
+                    processed = map find-and-attach defs;
+                    all-sections = flatten (map (p: p.validation) processed);
+                    too-deep = filter (sec: sec.depth > 6) all-sections;
+                  in
+                  if too-deep != [ ] then
+                    throw ''
+                      The option `${lib.options.showOption loc}` has sections nested too deeply:
+                      ${concatMapStrings (sec: "  - depth ${toString sec.depth} section in ${toString sec.file}\n") too-deep}
+                      Section hierarchy must not be deeper than 6 levels.''
+                  else baseType.merge loc (map (p: p.def // { value = p.processed; }) processed);
+              };
+            in
             # HACK: bail out for now
-            # TODO: find a reasonable cut-off for where to place raw content
-            listOf (either str (attrTag categories.flow));
+            with-section-constraints
+              # TODO: find a reasonable cut-off for where to place raw content
+              (listOf (either str (attrTag categories.flow)));
           default = [ ];
         };
       };
-      config.section-depth = get-section-depth config.content;
+
       config.categories = [ ];
       config.__toString = self: with lib;
         print-element name self.attrs (
@@ -393,8 +432,9 @@ let
             self.content)
         );
     };
+
     section = { config, name, ... }: {
-      imports = [ element content-element ];
+      imports = [ element ];
       options = {
         # setting to an attribute set will wrap the section in <section>
         attrs = mkOption {
@@ -413,6 +453,7 @@ let
             options = {
               attrs = mkAttrs { };
               content = mkOption {
+                # https://html.spec.whatwg.org/multipage/sections.html#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements
                 type = with types; either str (listOf (attrTag categories.phrasing));
               };
             };
@@ -429,14 +470,12 @@ let
           default = [ ];
         };
       };
-      config.section-depth = get-section-depth config.content + 1;
       options.heading-level = mkOption {
         # XXX: this will proudly fail if the invariant is violated,
         #      but the error message will be inscrutable
         type = with types; ints.between 1 6;
         internal = true;
       };
-      config.heading-level = cfg.section-depth - config.section-depth + 1;
       config.categories = [ "flow" "sectioning" "palpable" ];
       config.__toString = self: with lib;
         let
@@ -457,12 +496,11 @@ let
   };
 in
 {
-  imports = [ element content-element ];
+  imports = [ element ];
   options = {
     inherit (element-types) html;
   };
 
-  config.section-depth = config.html.body.section-depth;
   config.categories = [ ];
   config.__toString = self: ''
     <!DOCTYPE HTML >
