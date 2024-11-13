@@ -15,25 +15,22 @@ let
     new // { types = prev.recursiveUpdate prev.types new.types; };
   lib'' = lib.extend lib';
 in
-{
+rec {
   lib = import ./lib.nix { inherit lib; };
+  result = lib''.evalModules {
+    modules = [
+      ./structure
+      ./content
+      ./presentation
+      {
+        _module.args = {
+          inherit pkgs;
+        };
+      }
+    ];
+  };
 
-  build =
-    let
-      result = lib''.evalModules {
-        modules = [
-          ./structure
-          ./content
-          ./presentation
-          {
-            _module.args = {
-              inherit pkgs;
-            };
-          }
-        ];
-      };
-    in
-    result.config.build;
+  inherit (result.config) build;
 
   shell = pkgs.mkShellNoCC {
     packages = with pkgs; [
