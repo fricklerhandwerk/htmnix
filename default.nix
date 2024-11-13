@@ -6,16 +6,23 @@
     overlays = [ ];
   }
 , lib ? import "${sources.nixpkgs}/lib"
-,
 }:
+let
+  lib' = final: prev: import ./lib.nix { lib = final; };
+  lib'' = lib.extend lib';
+in
 {
   build =
     let
-      result = pkgs.lib.evalModules {
+      result = lib''.evalModules {
         modules = [
           ./structure
           ./content
-          { _module.args = { inherit pkgs; }; }
+          {
+            _module.args = {
+              inherit pkgs;
+            };
+          }
         ];
       };
     in
