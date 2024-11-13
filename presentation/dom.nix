@@ -369,7 +369,7 @@ let
                         process-with-depth = depth: content:
                           map
                             (x:
-                              if isAttrs x && x ? section && x.section ? heading
+                              if isAttrs x && x ? section
                               then x // {
                                 section = x.section // {
                                   heading-level = depth;
@@ -383,7 +383,7 @@ let
                         find-with-depth = depth: content:
                           let
                             sections = map (v: { inherit (def) file; value = v; depth = depth; })
-                              (filter (x: isAttrs x && x ? section && x.section ? heading) content);
+                              (filter (x: isAttrs x && x ? section) content);
                             subsections = concatMap
                               (x:
                                 if isAttrs x && x ? section && x.section ? content
@@ -441,28 +441,36 @@ let
           type = with types; nullOr (submodule { options = global-attrs; });
           default = null;
         };
-        # TODO: make `pre-`/`post-heading` wrap the heading in `<hgroup>` if non-empty
-        # https://html.spec.whatwg.org/multipage/sections.html#the-hgroup-element
-        pre-heading = mkOption {
-          type = with types; listOf (attrTag ({ inherit p; } // categories.scripting));
-          default = [ ];
-        };
         heading = mkOption {
+          # XXX: while there are no explicit rules on whether sections should contain headers,
+          #      sections should have content that would be listed in an outline.
+          #
+          #      https://html.spec.whatwg.org/multipage/sections.html#use-div-for-wrappers
+          #
+          #      such an outline is rather meaningless without headings for navigation,
+          #      which is why we enforce headings in sections.
+          #      arguably, and this is encoded here, a section *is defined* by its heading.
           type = with types; submodule ({ ... }: {
             imports = [ element ];
             options = {
               attrs = mkAttrs { };
+              # TODO: make `before`/`after` wrap the heading in `<hgroup>` if non-empty
+              # https://html.spec.whatwg.org/multipage/sections.html#the-hgroup-element
+              before = mkOption {
+                type = with types; listOf (attrTag ({ inherit p; } // categories.scripting));
+                default = [ ];
+              };
               content = mkOption {
                 # https://html.spec.whatwg.org/multipage/sections.html#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements
                 type = with types; either str (listOf (attrTag categories.phrasing));
               };
+              after = mkOption {
+                type = with types;
+                  listOf (attrTag ({ inherit p; } // categories.scripting));
+                default = [ ];
+              };
             };
           });
-        };
-        post-heading = mkOption {
-          type = with types;
-            listOf (attrTag ({ inherit p; } // categories.scripting));
-          default = [ ];
         };
         # https://html.spec.whatwg.org/multipage/sections.html#headings-and-outlines
         content = mkOption {
@@ -476,22 +484,24 @@ let
         type = with types; ints.between 1 6;
         internal = true;
       };
-      config.categories = [ "flow" "sectioning" "palpable" ];
-      config.__toString = self: with lib;
-        let
-          n = toString config.heading-level;
-          content =
-            "<h${n}${print-attrs self.heading.attrs}>${self.heading.content}</h${n}>" + join "\n" (map
+      config = {
+        categories = [ "flow" "sectioning" "palpable" ];
+        __toString = self: with lib;
+          let
+            n = toString config.heading-level;
+            content = ''<h${n}${print-attrs self.heading.attrs}>${self.heading.content}</h${n}>
+              '' + join "\n" (map
               (e:
                 if isAttrs e
                 then toString (lib.head (attrValues e))
                 else e
               )
               self.content);
-        in
-        if !isNull self.attrs
-        then print-element name self.attrs content
-        else content;
+          in
+          if !isNull self.attrs
+          then print-element name self.attrs content
+          else content;
+      };
     };
   };
 in
