@@ -53,7 +53,7 @@ in
         render-item = item:
           if item ? menu then ''
             <li>${item.menu.label}
-            ${lib.indent "  " (item.menu.outputs.html page)}
+              ${lib.indent "  " (item.menu.outputs.html page)}
             </li>
           ''
           else if item ? page then ''<li><a href="${page.link item.page}">${item.page.title}</a></li>''
