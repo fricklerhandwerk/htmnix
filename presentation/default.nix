@@ -37,47 +37,38 @@ in
       type = recursiveAttrs (with types; functionTo (functionTo str));
     };
 
-  config.templates.html =
-    let
-      commonmark = name: markdown: pkgs.runCommand "${name}.html"
-        {
-          buildInputs = [ pkgs.cmark ];
-        } ''
-        cmark ${builtins.toFile "${name}.md" markdown} > $out
+  config.templates.html = {
+    markdown = name: text:
+      let
+        commonmark = pkgs.runCommand "${name}.html"
+          {
+            buildInputs = [ pkgs.cmark ];
+          } ''
+          cmark ${builtins.toFile "${name}.md" text} > $out
+        '';
+      in
+      builtins.readFile commonmark;
+    nav = menu: page:
+      let
+        render-item = item:
+          if item ? menu then ''
+            <li>${item.menu.label}
+            ${lib.indent "  " (item.menu.outputs.html page)}
+            </li>
+          ''
+          else if item ? page then ''<li><a href="${page.link item.page}">${item.page.title}</a></li>''
+          else ''<li><a href="${item.link.url}">${item.link.label}</a></li>''
+        ;
+      in
+      ''
+        <nav>
+          <ul>
+            ${with lib; indent "    " (join "\n" (map render-item menu.items))}
+          </ul>
+        </nav>
       '';
-    in
-    {
-      nav = lib.mkDefault templates.nav;
-      page = lib.mkDefault (config: page: render-html {
-        html = {
-          head = {
-            title.text = page.title;
-            meta.description = page.description;
-            link.canonical = lib.head page.locations;
-          };
-          body.content = [
-            (config.menus.main.outputs.html page)
-            { section.heading.content = page.title; }
-            (builtins.readFile (commonmark page.name page.body))
-          ];
-        };
-      });
-      article = lib.mkDefault (config: page: render-html {
-        html = {
-          head = {
-            title.text = page.title;
-            meta.description = page.description;
-            meta.authors = if lib.isList page.author then page.author else [ page.author ];
-            link.canonical = lib.head page.locations;
-          };
-          body.content = [
-            (config.menus.main.outputs.html page)
-            { section.heading.content = page.title; }
-            (builtins.readFile (commonmark page.name page.body))
-          ];
-        };
-      });
-    };
+
+  };
 
   options.files = mkOption {
     description = ''
@@ -86,6 +77,8 @@ in
       By default, all elements in `option`{pages} are converted to files using their template or the default template.
       Add more files to the output by assigning to this attribute set.
     '';
+    # TODO: this should be attrsOf string-coercible instead.
+    #       we can convert this to file at the very end.
     type = with types; attrsOf path;
   };
 

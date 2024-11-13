@@ -5,6 +5,14 @@ let
     types
     ;
   cfg = config;
+  render-html = document:
+    let
+      eval = lib.evalModules {
+        class = "DOM";
+        modules = [ document (import ../presentation/dom.nix) ];
+      };
+    in
+    toString eval.config;
 in
 {
   content-types.article = { config, collection, ... }: {
@@ -27,6 +35,20 @@ in
       };
     };
     config.name = lib.slug config.title;
-    config.outputs.html = lib.mkForce (cfg.templates.html.article cfg config);
+    config.outputs.html = lib.mkForce (render-html {
+      html = {
+        head = {
+          title.text = config.title;
+          meta.description = config.description;
+          meta.authors = if lib.isList config.author then config.author else [ config.author ];
+          link.canonical = lib.head config.locations;
+        };
+        body.content = [
+          (cfg.menus.main.outputs.html config)
+          { section.heading.content = config.title; }
+          (cfg.templates.html.markdown config.name config.body)
+        ];
+      };
+    });
   };
 }

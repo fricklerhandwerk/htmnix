@@ -45,13 +45,13 @@ in
         #       names is soft.
         default = target: with lib; "${relativePath (head config.locations) (head target.locations)}.html";
       };
-      outputs = mkOption {
-        # TODO: figure out how to make this overridable at any granularity.
-        #       it should be possible with the DOM module now.
+      outputs.html = mkOption {
+        # TODO: make this of type DOM and convert to string at the output.
+        #       the output aggregator then only needs something string-coercible
         description = ''
           Representations of the document in different formats
         '';
-        type = with types; attrsOf str;
+        type = with types; str;
       };
     };
   };

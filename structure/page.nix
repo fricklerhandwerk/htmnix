@@ -5,6 +5,14 @@ let
     types
     ;
   cfg = config;
+  render-html = document:
+    let
+      eval = lib.evalModules {
+        class = "DOM";
+        modules = [ document (import ../presentation/dom.nix) ];
+      };
+    in
+    toString eval.config;
 in
 {
   content-types.page = { name, config, ... }: {
@@ -34,6 +42,19 @@ in
         type = types.str;
       };
     };
-    config.outputs.html = cfg.templates.html.page cfg config;
+    config.outputs.html = render-html {
+      html = {
+        head = {
+          title.text = config.title;
+          meta.description = config.description;
+          link.canonical = lib.head config.locations;
+        };
+        body.content = [
+          (cfg.menus.main.outputs.html config)
+          { section.heading.content = config.title; }
+          (cfg.templates.html.markdown config.name config.body)
+        ];
+      };
+    };
   };
 }

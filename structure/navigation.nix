@@ -56,7 +56,7 @@ in
           It must be a function that takes the page on which the navigation is to be shown, such that relative links get computed correctly.
         '';
         type = with types; attrsOf (functionTo str);
-        default.html = cfg.templates.html.nav { menu = config; };
+        default.html = cfg.templates.html.nav config;
       };
     };
   };
