@@ -14,17 +14,16 @@ rec {
       <body>
     </html>
   '';
-  nav = { page, menu }:
+  nav = menu: page:
     let
       render-item = item:
-        if item ? menu then
-          ''
-            <li>${item.menu.label}
-            ${lib.indent "  " (nav { inherit page; menu = item; })}
-          ''
-        else
-          if item ? page then ''<li><a href="${page.link item.page}">${item.page.title}</a></li>''
-          else ''<li><a href="${item.link.url}">${item.link.label}</a></li>''
+        if item ? menu then ''
+          <li>${item.menu.label}
+          ${lib.indent "  " (item.menu.outputs.html page)}
+          </li>
+        ''
+        else if item ? page then ''<li><a href="${page.link item.page}">${item.page.title}</a></li>''
+        else ''<li><a href="${item.link.url}">${item.link.label}</a></li>''
       ;
     in
     ''

@@ -29,7 +29,7 @@ in
     };
   };
 
-  content-types.navigation = { name, ... }: {
+  content-types.navigation = { name, config, ... }: {
     options = {
       name = mkOption {
         description = "Symbolic name, used as a human-readable identifier";
@@ -48,6 +48,15 @@ in
           page = mkOption { type = subtype cfg.content-types.page; };
           link = mkOption { type = submodule cfg.content-types.named-link; };
         });
+      };
+      outputs = mkOption {
+        description = ''
+          Representations of the navigation structure in different formats
+
+          It must be a function that takes the page on which the navigation is to be shown, such that relative links get computed correctly.
+        '';
+        type = with types; attrsOf (functionTo str);
+        default.html = cfg.templates.html.nav { menu = config; };
       };
     };
   };

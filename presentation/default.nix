@@ -21,6 +21,9 @@ in
 
         Each template function takes the complete site `config` and the document's data structure.
       '';
+      # TODO: this function should probably take a single attrs,
+      #       otherwise it's quite inflexible.
+      #       named parameters would also help with readability at the call site
       type = recursiveAttrs (with types; functionTo (functionTo str));
     };
 
@@ -34,6 +37,7 @@ in
       '';
     in
     {
+      nav = lib.mkDefault templates.nav;
       page = lib.mkDefault (config: page: templates.html {
         head = ''
           <title>${page.title}</title>
@@ -41,7 +45,7 @@ in
           <link rel="canonical" href="${page.outPath}" />
         '';
         body = ''
-          ${templates.nav { inherit page; menu = { menu = config.menus.main; }; }}
+          ${config.menus.main.outputs.html page}
           ${builtins.readFile (commonmark page.name page.body)}
         '';
       });
@@ -55,7 +59,7 @@ in
           }
         '';
         body = ''
-          ${templates.nav { inherit page; menu = { menu = config.menus.main; }; }}
+          ${config.menus.main.outputs.html page}
           ${builtins.readFile (commonmark page.name page.body)}
         '';
       });
