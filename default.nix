@@ -9,10 +9,10 @@
 ,
 }:
 let
-  lib' = pkgs.callPackage ./lib.nix { };
+  site = pkgs.callPackage ./site.nix { };
 in
 {
-  site = lib'.site "fediversity.eu" ./content;
+  build = site.build "fediversity.eu" ./content;
 
   shell = pkgs.mkShellNoCC {
     packages = with pkgs; [

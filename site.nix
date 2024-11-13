@@ -6,7 +6,7 @@ rec {
   /**
     Build the web site
   */
-  site = name: dir:
+  build = name: dir:
     let
       script = ''
         mkdir $out
