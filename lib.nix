@@ -1,6 +1,20 @@
 { lib }:
 rec {
   /**
+    Recursively replace occurrences of `from` with `to` within `string`
+
+    Example:
+
+        replaceStringRec "--" "-" "hello-----world"
+        => "hello-world"
+  */
+  replaceStringsRec = from: to: string:
+    let
+      replaced = lib.replaceStrings [ from ] [ to ] string;
+    in
+    if replaced == string then string else replaceStringsRec from to replaced;
+
+  /**
     Create a URL-safe slug from any string
   */
   slug = str:
@@ -22,14 +36,30 @@ rec {
           matched = builtins.match "(-*)([^-].*[^-]|[^-])(-*)" s;
         in
         with lib; optionalString (!isNull matched) (builtins.elemAt matched 1);
-
-      collapseHyphens = s:
-        let
-          result = builtins.replaceStrings [ "--" ] [ "-" ] s;
-        in
-        if result == s then s else collapseHyphens result;
     in
-    trimHyphens (collapseHyphens replaced);
+    trimHyphens (replaceStringsRec "--" "-" replaced);
+
+  squash = replaceStringsRec "\n\n" "\n";
+
+  /**
+    Trim trailing spaces and squash non-leading spaces
+  */
+  trim = string:
+    let
+      trimLine = line:
+        with lib;
+        let
+          # separate leading spaces from the rest
+          parts = split "(^ *)" line;
+          spaces = head (elemAt parts 1);
+          rest = elemAt parts 2;
+          # drop trailing spaces
+          body = head (split " *$" rest);
+        in
+        if body == "" then "" else
+        spaces + replaceStringsRec "  " " " body;
+    in
+    join "\n" (map trimLine (splitLines string));
 
   join = lib.concatStringsSep;
 
