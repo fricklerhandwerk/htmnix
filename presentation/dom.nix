@@ -30,7 +30,6 @@ let
     # TODO: add fields for upstream documentation references
     # TODO: programmatically generate documentation
     options = with lib; {
-      attrs = mkAttrs { };
       categories = mkOption {
         type = types.listOfUnique (types.enum content-categories);
       };
@@ -157,6 +156,7 @@ let
       imports = [ element ];
       options = {
         inherit (element-types) html;
+        attrs = mkAttrs { };
       };
 
       config.categories = [ ];
@@ -169,6 +169,7 @@ let
     html = { name, ... }: {
       imports = [ element ];
       options = {
+        attrs = mkAttrs { };
         inherit (element-types) head body;
       };
 
@@ -182,6 +183,7 @@ let
     head = { name, ... }: {
       imports = [ element ];
       options = with lib; {
+        attrs = mkAttrs { };
         # https://html.spec.whatwg.org/multipage/semantics.html#the-head-element:concept-element-content-model
         # XXX: this doesn't implement the iframe srcdoc semantics
         #      as those have questionable value and would complicate things a bit.
@@ -289,6 +291,7 @@ let
 
     title = { name, ... }: {
       imports = [ element ];
+      options.attrs = mkAttrs { };
       options.text = mkOption {
         type = types.str;
       };
@@ -300,18 +303,17 @@ let
     base = { name, ... }: {
       imports = [ element ];
       # TODO: "A base element must have either an href attribute, a target attribute, or both."
-      attrs = mkAttrs { inherit (attrs) href target; };
+      options = global-attrs // { inherit (attrs) href target; };
       config.categories = [ "metadata" ];
+      config.__toString = self: "<base${print-attrs self}>";
     };
 
     link = { name, ... }: {
       imports = [ element ];
-      options = mkAttrs
-        {
-          # TODO: more attributes
-          # https://html.spec.whatwg.org/multipage/semantics.html#the-link-element:concept-element-attributes
-          inherit (attrs) href;
-        } // {
+      options = mkAttrs {
+        # TODO: more attributes
+        # https://html.spec.whatwg.org/multipage/semantics.html#the-link-element:concept-element-attributes
+        inherit (attrs) href;
         # XXX: there are variants of `rel` for `link`, `a`/`area`, and `form`
         rel = mkOption {
           # https://html.spec.whatwg.org/multipage/semantics.html#attr-link-rel
@@ -344,12 +346,13 @@ let
       # TODO: figure out how to make body-ok `link` elements
       # https://html.spec.whatwg.org/multipage/semantics.html#allowed-in-the-body
       config.categories = [ "metadata" ];
-      config.__toString = self: "<name${print-attrs self.attrs} />";
+      config.__toString = self: "<link${print-attrs self}>";
     };
 
     body = { name, ... }: {
       imports = [ element ];
       options = {
+        attrs = mkAttrs { };
         content = mkOption {
           type = with types;
             # HACK: bail out for now
