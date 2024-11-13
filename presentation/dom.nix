@@ -536,7 +536,7 @@ let
               # setting to an attribute set will wrap the section in `<hgroup>`
               hgroup.attrs = mkOption {
                 type = with types; nullOr (submodule { options = global-attrs; });
-                default = with lib; mkIf (!isNull config.before || !isNull config.after) { };
+                default = with lib; if (config.before == [ ] && config.after == [ ]) then null else { };
               };
               # https://html.spec.whatwg.org/multipage/sections.html#the-hgroup-element
               before = mkOption {
@@ -578,8 +578,10 @@ let
               ${heading}
               ${optionalString (!isNull self.heading.after) (toString-unwrap self.heading.after)}
             '');
-            content = if isNull self.heading.hgroup.attrs then heading else hgroup
-              + join "\n" (map toString-unwrap self.content);
+            content =
+              (if isNull self.heading.hgroup.attrs then heading else hgroup)
+              +
+              join "\n" (map toString-unwrap self.content);
           in
           if !isNull self.attrs
           then print-element name self.attrs content
