@@ -53,13 +53,11 @@ in
         #       names is soft.
         default = target: with lib; "${relativePath (head config.locations) (head target.locations)}.html";
       };
-      outputs.html = mkOption {
-        # TODO: make this of type DOM and convert to string at the output.
-        #       the output aggregator then only needs something string-coercible
+      outputs = mkOption {
         description = ''
           Representations of the document in different formats
         '';
-        type = with types; str;
+        type = with types; attrsOf (either str attrs);
       };
     };
   };

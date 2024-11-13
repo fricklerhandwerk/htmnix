@@ -5,14 +5,6 @@ let
     types
     ;
   cfg = config;
-  render-html = document:
-    let
-      eval = lib.evalModules {
-        class = "DOM";
-        modules = [ document (import ../presentation/dom.nix) ];
-      };
-    in
-    toString eval.config;
 in
 {
   content-types.article = { config, collection, ... }: {
@@ -35,7 +27,7 @@ in
       };
     };
     config.name = lib.slug config.title;
-    config.outputs.html = lib.mkForce (render-html {
+    config.outputs.html = lib.mkForce (cfg.templates.html.dom {
       html = {
         head = {
           title.text = config.title;

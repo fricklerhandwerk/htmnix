@@ -1,5 +1,8 @@
 { lib }:
 rec {
+  template = g: f: x:
+    (g (f x)) // { override = o: g (lib.recursiveUpdate (f x) o); };
+
   /**
     Recursively replace occurrences of `from` with `to` within `string`
 

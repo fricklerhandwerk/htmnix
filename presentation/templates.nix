@@ -4,19 +4,21 @@ let
     mkOption
     types
     ;
-  # TODO: optionally run the whole thing through the validator
-  # https://github.com/validator/validator
-  render-html = document:
-    let
-      eval = lib.evalModules {
-        class = "DOM";
-        modules = [ document (import ./dom.nix) ];
-      };
-    in
-    toString eval.config;
 in
 {
   config.templates.html = {
+    dom = document:
+      let
+        eval = lib.evalModules {
+          class = "DOM";
+          modules = [ document (import ./dom.nix) ];
+        };
+      in
+      {
+        __toString = _: toString eval.config;
+        value = eval.config;
+      };
+
     markdown = { name, body }:
       let
         commonmark = pkgs.runCommand "${name}.html"

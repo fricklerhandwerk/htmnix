@@ -21,7 +21,7 @@ in
       description = ''
         Collection of named helper functions for conversion different structured representations which can be rendered to a string
       '';
-      type = recursiveAttrs (with types; functionTo (coercedTo attrs toString str));
+      type = recursiveAttrs (with types; functionTo (either str attrs));
     };
 
   options.files = mkOption {

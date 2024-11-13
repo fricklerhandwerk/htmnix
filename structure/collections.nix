@@ -68,7 +68,7 @@ in
     in
     with lib; foldl
       (acc: elem: acc // {
-        "${head elem.locations}.html" = builtins.toFile "${elem.name}.html" elem.outputs.html;
+        "${head elem.locations}.html" = builtins.toFile "${elem.name}.html" "${elem.outputs.html}";
       })
       { }
       collections;
