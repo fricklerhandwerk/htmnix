@@ -14,9 +14,6 @@ in
         type = types.str;
         default = name;
       };
-      # TODO: reconsider using `page.outPath` and what to put into `locations`.
-      #       maybe we can avoid having ".html" suffixes there.
-      #       since templates can output multiple files, `html` is merely one of many things we *could* produce.
       locations = mkOption {
         description = ''
           List of historic output locations for the resulting file
@@ -46,15 +43,7 @@ in
         # TODO: we may want links to other representations,
         #       and currently the mapping of output types to output file
         #       names is soft.
-        default = target: with lib; "${relativePath config.outPath target.outPath}.html";
-      };
-      # TODO: may not need it when using `link`; could repurpose it to render the default template
-      outPath = mkOption {
-        description = ''
-          Location of the page, used for transparently creating links
-        '';
-        type = types.str;
-        default = lib.head config.locations;
+        default = target: with lib; "${relativePath (head config.locations) (head target.locations)}.html";
       };
       outputs = mkOption {
         description = ''

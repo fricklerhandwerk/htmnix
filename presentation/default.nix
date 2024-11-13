@@ -42,7 +42,7 @@ in
         head = ''
           <title>${page.title}</title>
           <meta name="description" content="${page.description}" />
-          <link rel="canonical" href="${page.outPath}" />
+          <link rel="canonical" href="${lib.head page.locations}" />
         '';
         body = ''
           ${config.menus.main.outputs.html page}
