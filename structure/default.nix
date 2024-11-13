@@ -9,6 +9,7 @@ in
 {
   imports = [ ./content-types.nix ];
 
+  # TODO: enable i18n, e.g. via a nested attribute for language-specific content
   options.pages = mkOption {
     description = ''
       Collection of pages on the site
