@@ -23,17 +23,24 @@ rec {
       cmark ${builtins.toFile "${name}.md" markdown} > $out
     '';
 
-  files = dir: lib.mapAttrs'
+  /**
+    Get documents from a flat directory of files
+  */
+  documents = dir: lib.mapAttrs'
     (
-      attrname: value:
-        let
-          document = import (dir + "/${attrname}");
-          name = lib.removeSuffix ".nix" attrname;
-        in
-        {
-          name = "${name}.html";
-          value = html document "${name}.html";
-        }
+      attrname: value: {
+        name = lib.removeSuffix ".nix" attrname;
+        value = import (dir + "/${attrname}");
+      }
     )
     (builtins.readDir dir);
+
+  files = dir: lib.mapAttrs'
+    (
+      name: document: {
+        name = document.outPath;
+        value = html document "${name}.html";
+      }
+    )
+    (documents dir);
 }
