@@ -21,11 +21,19 @@ in
         description = ''
           List of historic output locations for the resulting file
 
+          Elements are relative paths to output files, without suffix.
+          The suffix will be added depending on output file type.
+
           The first element is the canonical location.
           All other elements are used to create redirects to the canonical location.
+
+          The default entry is the symbolic name of the document.
+          When changing the symbolic name, append the old one to your custom list and use `lib.mkForce` to make sure the default element will be overridden.
         '';
         type = with types; nonEmptyListOf str;
         apply = config.process-locations;
+        example = [ "about/overview" "index" ];
+        default = [ config.name ];
       };
       process-locations = mkOption {
         description = "Function to post-process the output locations of contained document";
@@ -35,7 +43,10 @@ in
       link = mkOption {
         description = "Helper function for transparent linking to other pages";
         type = with types; functionTo str;
-        default = target: with lib; relativePath config.outPath target.outPath;
+        # TODO: we may want links to other representations,
+        #       and currently the mapping of output types to output file
+        #       names is soft.
+        default = target: with lib; "${relativePath config.outPath target.outPath}.html";
       };
       # TODO: may not need it when using `link`; could repurpose it to render the default template
       outPath = mkOption {

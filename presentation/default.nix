@@ -79,7 +79,8 @@ in
     in
     with lib; foldl
       (acc: elem: acc // {
-        "${head elem.locations}" = builtins.toFile "${elem.name}.html" elem.outputs.html;
+        # TODO: we may or may not want to enforce the mapping of file types to output file name suffixes
+        "${head elem.locations}.html" = builtins.toFile "${elem.name}.html" elem.outputs.html;
       })
       { }
       (pages ++ collections);

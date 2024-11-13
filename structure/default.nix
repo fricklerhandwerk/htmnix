@@ -58,9 +58,13 @@ in
 
               The first element is the canonical location.
               All other elements are used to create redirects to the canonical location.
+
+              The default entry is the symbolic name of the collection.
+              When changing the symbolic name, append the old one to your custom list and use `lib.mkForce` to make sure the default element will be overridden.
             '';
             type = with types; nonEmptyListOf str;
             example = [ "." ];
+            default = [ config.name ];
           };
           entry = mkOption
             {
