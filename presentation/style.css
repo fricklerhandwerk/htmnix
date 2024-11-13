@@ -20,16 +20,18 @@ body {
   font-family: Heebo, sans-serif;
   color: var(--text-color);
   background-color: var(--background);
-  padding: 0 1em;
+  padding: 1em;
 }
 
 section {
   max-width: 50em;
   margin: auto;
+  margin-top: 1em;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: Signika, sans-serif;
+  margin-top: 0;
 }
 
 h1 {
@@ -37,8 +39,8 @@ h1 {
 }
 
 header > nav {
-  margin: 1em;
   font-family: Signika, sans-serif;
+  margin-bottom: 2em;
 }
 
 a:visited,
@@ -59,7 +61,7 @@ header a {
 }
 
 header a:hover,
-header span:hover
+header li:hover
 {
   color: var(--highlight);
 }
@@ -84,14 +86,14 @@ header > nav > ul > li:first-child a {
   content: url('ngi-fediversity.svg');
   display: inline-block;
   height: 2em;
-  margin-right: 4em;
+  margin-right: 5vw;
 }
 
 header > nav > ul > li:last-child > a {
   border: 1pt solid var(--text-color);
   padding: 0.5em 1em 0.5em 1em;
   border-radius: 3pt;
-  margin-left: 4em;
+  margin-left: 5vw;
 }
 
 header > nav > ul > li:last-child:hover > a {
@@ -100,35 +102,122 @@ header > nav > ul > li:last-child:hover > a {
   border-color: var(--background);
 }
 
-header > nav > ul > li > span {
-  position: relative;
-  cursor: pointer;
-  /* same as nav margin to bridge the gap for hovering */
-  padding: 1em 0;
-}
-
-header > nav > ul > li > nav {
-  display: none;
+header > nav > ul > li > details > nav {
   position: absolute;
-  margin-top: 1em;
+  /*top: 2em;*/
   background: var(--background);
   min-width: max-content;
-  padding: 0.5em;
+  margin-top: 1em;
+  padding: 1em;
   box-shadow: 0 0 1em var(--shadow);
-  z-index: 1;
+  z-index: 0;
 }
 
-header > nav > ul > li > span:hover + nav,
-header > nav > ul > li > nav:hover {
+header > nav > ul > li > details {
   display: block;
+  /*padding: 1em 0;*/
+  cursor: pointer;
 }
 
-/* Optional: Style the dropdown items */
-header > nav > ul > li > nav ul li {
-  padding: 0.25em 0.5em;
+header > nav > ul > li > details[open] > summary {
+  color: var(--highlight);
 }
 
-/* Position the parent li relatively for absolute positioning context */
-header > nav > ul > li {
-  position: relative;
+header > nav > ul > li > details > nav ul li {
+  padding: 0.25em 0;
+}
+
+#menu-toggle {
+  display: none;
+}
+
+@media (max-width: 50em) {
+  #menu-toggle:checked ~ nav > ul > li {
+    display: block;
+  }
+
+  #menu-toggle::before {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 20 20'%3E%3Cpath d='M0 3h20v2H0V3z m0 6h20v2H0V9z m0 6h20v2H0V0z'/%3E%3C/svg%3E");
+    display: block;
+  }
+
+  #menu-toggle:checked::before {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 20 20'%3E%3Cpolygon points='11 9 22 9 22 11 11 11 11 22 9 22 9 11 -2 11 -2 9 9 9 9 -2 11 -2' transform='rotate(45 10 10)'/%3E%3C/svg%3E");
+  }
+
+  header > nav {
+    margin-bottom: 1em;
+  };
+
+  header > nav > ul > li:not(:first-child) {
+    display: none;
+  }
+
+  header > nav > ul {
+    flex-direction: column;
+  }
+
+  header > nav > ul > li {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 1.3em;
+  }
+
+  header > nav > ul > li > details{
+    /* compensate for collapse triangle */
+    margin-left: -1rem;
+  }
+
+  header > nav > ul > li > details > nav {
+    position: relative;
+    margin: 0;
+    padding: 0 0 0.5em 0;
+    box-shadow: none;
+    /* compensate back for container's collapse triangle compensation */
+    margin-left: 1rem;
+  }
+
+  header > nav > ul > li > details > nav ul li {
+    padding: 0;
+    font-size: 1.15rem;
+  }
+
+  header > nav > ul::before {
+    content: "";
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  header > nav > ul > li:first-child {
+    display: block;
+  }
+
+  header > nav > ul > li:first-child a {
+    margin: 0 0 0.5em 0;
+    height: 2.5em;
+  }
+
+  header > nav > ul > li:last-child {
+    margin: 1em 0 0 0;
+  }
+
+  header > nav > ul > li:last-child a {
+    margin: 0;
+  }
+
+  header {
+    position: relative;
+  }
+
+  /* for some reason this must be at the end to work */
+  #menu-toggle {
+    display: block;
+    position: absolute;
+    right: 1em;
+    top: 0.5em;
+    appearance: none;
+    cursor: pointer;
+  }
 }

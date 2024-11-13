@@ -55,6 +55,7 @@ in
         meta.description = page.description;
         link.canonical = lib.head page.locations;
         link.stylesheets = [
+          # TODO: allow enabling preload with a flag
           { href = "${page.link cfg.assets."style.css"}"; }
           { href = "${page.link cfg.assets."fonts.css"}"; }
         ];
@@ -62,6 +63,7 @@ in
       body.content = [
         ''
           <header>
+            <input type="checkbox" id="menu-toggle">
             ${lib.indent "  " (cfg.menus.main.outputs.html page)}
           </header>
         ''
