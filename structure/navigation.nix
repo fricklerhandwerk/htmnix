@@ -5,6 +5,10 @@ let
     types
     ;
   cfg = config;
+  subtype = baseModule: types.submodule [
+    baseModule
+    { _module.freeformType = types.attrs; }
+  ];
 in
 {
   content-types.named-link = { ... }: {
@@ -36,7 +40,7 @@ in
         description = "List of menu items";
         type = with types; listOf (attrTag {
           menu = mkOption { type = submodule cfg.content-types.navigation; };
-          page = mkOption { type = submodule cfg.content-types.page; };
+          page = mkOption { type = subtype cfg.content-types.page; };
           link = mkOption { type = submodule cfg.content-types.named-link; };
         });
       };
