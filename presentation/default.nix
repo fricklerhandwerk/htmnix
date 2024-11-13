@@ -7,16 +7,24 @@ let
   templates = import ./templates.nix { inherit lib; };
 in
 {
-  options.templates = mkOption {
-    description = ''
-      Collection of named functions to convert page contents to files
+  options.templates =
+    let
+      # arbitrarily nested attribute set where the leaves are of type `type`
+      # NOTE: due to how `either` works, the first match is significant,
+      # so if `type` happens to be an attrset, the typecheck will consider
+      # `type`, not `attrsOf`
+      recursiveAttrs = type: with types; attrsOf (either type (recursiveAttrs type));
+    in
+    mkOption {
+      description = ''
+        Collection of named functions to convert document contents to a string representation
 
-      Each template function takes the complete site `config` and the page data structure.
-    '';
-    type = with types; attrsOf (functionTo (functionTo options.files.type));
-  };
+        Each template function takes the complete site `config` and the document's data structure.
+      '';
+      type = recursiveAttrs (with types; functionTo (functionTo str));
+    };
 
-  config.templates =
+  config.templates.html =
     let
       commonmark = name: markdown: pkgs.runCommand "${name}.html"
         {
@@ -26,37 +34,27 @@ in
       '';
     in
     {
-      page = lib.mkDefault (config: page: {
-        # TODO: create static redirects from `tail page.locations`
-        # TODO: reconsider using `page.outPath` and what to put into `locations`.
-        #       maybe we can avoid having ".html" suffixes there.
-        #       since templates can output multiple files, `html` is merely one of many things we *could* produce.
-        # TODO: maybe it would even make sense to split routing and rendering altogether
-        ${page.outPath} = builtins.toFile "${page.name}.html" (templates.html {
-          head = ''
-            <title>${page.title}</title>
-            <meta name="description" content="${page.description}" />
-            <link rel="canonical" href="${page.outPath}" />
-          '';
-          body = ''
-            ${templates.nav { menu = { menu = config.menus.main; }; }}
-            ${builtins.readFile (commonmark page.name page.body)}
-          '';
-        });
+      page = lib.mkDefault (config: page: templates.html {
+        head = ''
+          <title>${page.title}</title>
+          <meta name="description" content="${page.description}" />
+          <link rel="canonical" href="${page.outPath}" />
+        '';
+        body = ''
+          ${templates.nav { menu = { menu = config.menus.main; }; }}
+          ${builtins.readFile (commonmark page.name page.body)}
+        '';
       });
-      article = lib.mkDefault (config: page: {
-        # TODO: create static redirects from `tail page.locations`
-        ${page.outPath} = builtins.toFile "${page.name}.html" (templates.html {
-          head = ''
-            <title>${page.title}</title>
-            <meta name="description" content="${page.description}" />
-            <meta name="author" content="${with lib; if isList page.author then join ", " page.author else page.author}" />
-          '';
-          body = ''
-            ${templates.nav { menu = { menu = config.menus.main; }; }}
-            ${builtins.readFile (commonmark page.name page.body)}
-          '';
-        });
+      article = lib.mkDefault (config: page: templates.html {
+        head = ''
+          <title>${page.title}</title>
+          <meta name="description" content="${page.description}" />
+          <meta name="author" content="${with lib; if isList page.author then join ", " page.author else page.author}" />
+        '';
+        body = ''
+          ${templates.nav { menu = { menu = config.menus.main; }; }}
+          ${builtins.readFile (commonmark page.name page.body)}
+        '';
       });
     };
 
@@ -71,25 +69,24 @@ in
   };
 
   config.files =
+    # TODO: create static redirects from `tail page.locations`
     let
-      pages = lib.concatMapAttrs
-        (name: page: page.template config page)
-        config.pages;
-      collections =
-        let
-          byCollection = with lib; mapAttrs
-            (_: collection:
-              map (entry: entry.template config entry) collection.entry
-            )
-            config.collections;
-        in
-        with lib; concatMapAttrs
-          (collection: entries:
-            foldl' (acc: entry: acc // entry) { } entries
-          )
-          byCollection;
+      pages = lib.attrValues config.pages;
+      collections = with lib; concatMap (collection: collection.entry) (attrValues config.collections);
+      collections' = with lib; map
+        (
+          entry: recursiveUpdate entry {
+            locations = map (l: "${entry.collection.name}/${l}") entry.locations;
+          }
+        )
+        collections;
     in
-    pages // collections;
+    with lib; foldl
+      (acc: elem: acc // {
+        "${head elem.locations}" = builtins.toFile "${elem.name}.html" elem.outputs.html;
+      })
+      { }
+      (pages ++ collections');
 
   options.build = mkOption {
     description = ''

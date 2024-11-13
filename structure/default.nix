@@ -42,11 +42,15 @@ in
             description = "Type of entries in the collection";
             type = types.deferredModule;
           };
+          name = mkOption {
+            description = "Symbolic name, used as a human-readable identifier";
+            type = types.str;
+            default = name;
+          };
           entry = mkOption {
             description = "An entry in the collection";
             type = types.collection (types.submodule ({
-              _module.args.collection = config.entry;
-              _module.args.collectionName = name;
+              _module.args.collection = config;
               imports = [ config.type ];
             }));
           };

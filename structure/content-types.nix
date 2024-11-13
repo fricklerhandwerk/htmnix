@@ -16,12 +16,15 @@ in
   config.content-types = {
     document = { name, config, ... }: {
       options = {
-
         name = mkOption {
           description = "Symbolic name, used as a human-readable identifier";
           type = types.str;
           default = name;
         };
+        # TODO: reconsider using `page.outPath` and what to put into `locations`.
+        #       maybe we can avoid having ".html" suffixes there.
+        #       since templates can output multiple files, `html` is merely one of many things we *could* produce.
+        # TODO: make `apply` configurable so one can programmatically modify locations
         locations = mkOption {
           description = ''
             List of historic output locations for the resulting file
@@ -44,17 +47,11 @@ in
           type = types.str;
           default = lib.head config.locations;
         };
-        # TODO: maybe it would even make sense to split routing and rendering altogether.
-        #       in that case, templates would return strings, and a different
-        #       piece of the machinery resolves rendering templates to files
-        #       using `locations`.
-        #       then we'd have e.g. `templates.html` and `templates.atom` for
-        #       different output formats.
-        template = mkOption {
+        outputs = mkOption {
           description = ''
-            Function that converts the page contents to files
+            Representations of the document in different formats
           '';
-          type = with types; functionTo (functionTo options.files.type);
+          type = with types; attrsOf str;
         };
       };
     };
@@ -85,12 +82,17 @@ in
           type = types.str;
         };
       };
-      config.template = cfg.templates.page;
+      config.outputs.html = cfg.templates.html.page cfg config;
     };
 
-    article = { config, collectionName, ... }: {
+    article = { config, collection, ... }: {
       imports = [ cfg.content-types.page ];
       options = {
+        collection = mkOption {
+          description = "Collection this article belongs to";
+          type = options.collections.type.nestedTypes.elemType;
+          default = collection;
+        };
         date = mkOption {
           description = "Publication date";
           type = with types; nullOr str;
@@ -103,8 +105,10 @@ in
         };
       };
       config.name = lib.slug config.title;
-      config.outPath = "${collectionName}/${lib.head config.locations}";
-      config.template = lib.mkForce cfg.templates.article;
+      # TODO: this should be covered by the TBD `link` function instead,
+      #       taking a historical list of collection names into account
+      config.outPath = "${collection.name}/${lib.head config.locations}";
+      config.outputs.html = lib.mkForce (cfg.templates.html.article cfg config);
     };
 
     named-link = { ... }: {
