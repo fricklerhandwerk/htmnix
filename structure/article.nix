@@ -1,7 +1,6 @@
 { config, options, lib, ... }:
 let
-  inherit (lib)
-    mkOption
+  inherit (lib) mkOption
     types
     ;
   cfg = config;
