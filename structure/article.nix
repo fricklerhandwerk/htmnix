@@ -34,15 +34,19 @@ in
         body.content = lib.mkForce [
           (cfg.menus.main.outputs.html config)
           {
-            section.heading = {
-              # TODO: i18n support
-              # TODO: structured dates
-              before = [{ p.content = "Published ${config.date}"; }];
-              content = config.title;
-              after = [{ p.content = "Written by ${config.author}"; }];
+            section = {
+              heading = {
+                # TODO: i18n support
+                # TODO: structured dates
+                before = [{ p.content = "Published ${config.date}"; }];
+                content = config.title;
+                after = [{ p.content = "Written by ${config.author}"; }];
+              };
+              content = [
+                (cfg.templates.html.markdown { inherit (config) name body; })
+              ];
             };
           }
-          (cfg.templates.html.markdown { inherit (config) name body; })
         ];
       };
     });

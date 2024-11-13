@@ -64,8 +64,14 @@ in
       };
       body.content = [
         (cfg.menus.main.outputs.html page)
-        { section.heading.content = page.title; }
-        (cfg.templates.html.markdown { inherit (page) name body; })
+        {
+          section = {
+            heading.content = page.title;
+            content = [
+              (cfg.templates.html.markdown { inherit (page) name body; })
+            ];
+          };
+        }
       ];
     };
   });
