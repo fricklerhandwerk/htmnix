@@ -5,11 +5,13 @@ let
     types
     ;
   templates = import ./templates.nix { inherit lib; };
+  # TODO: optionally run the whole thing through the validator
+  # https://github.com/validator/validator
   render-html = document:
     let
       eval = lib.evalModules {
         class = "DOM";
-        modules = [ document (import ./dom.nix { inherit lib; }).document ];
+        modules = [ document (import ./dom.nix) ];
       };
     in
     toString eval.config;
@@ -53,13 +55,11 @@ in
             meta.description = page.description;
             link.canonical = lib.head page.locations;
           };
-          body.content = ''
-            ${config.menus.main.outputs.html page}
-
-            <h1>${page.title}</h1>
-
-            ${builtins.readFile (commonmark page.name page.body)}
-          '';
+          body.content = [
+            (config.menus.main.outputs.html page)
+            { section.heading.content = page.title; }
+            (builtins.readFile (commonmark page.name page.body))
+          ];
         };
       });
       article = lib.mkDefault (config: page: render-html {
@@ -70,13 +70,11 @@ in
             meta.authors = if lib.isList page.author then page.author else [ page.author ];
             link.canonical = lib.head page.locations;
           };
-          body.content = ''
-            ${config.menus.main.outputs.html page}
-
-            <h1>${page.title}</h1>
-
-            ${builtins.readFile (commonmark page.name page.body)}
-          '';
+          body.content = [
+            (config.menus.main.outputs.html page)
+            { section.heading.content = page.title; }
+            (builtins.readFile (commonmark page.name page.body))
+          ];
         };
       });
     };

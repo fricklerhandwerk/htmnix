@@ -5,8 +5,9 @@
   Inspired by https://github.com/knupfer/type-of-html by @knupfer (BSD-3-Clause)
   Similar work from the OCaml ecosystem: https://github.com/ocsigen/tyxml
 */
-{ lib, ... }:
+{ config, lib, ... }:
 let
+  cfg = config;
   inherit (lib) mkOption types;
 
   # https://html.spec.whatwg.org/multipage/dom.html#content-models
@@ -25,8 +26,16 @@ let
     "scripting" # https://html.spec.whatwg.org/multipage/dom.html#script-supporting-elements
   ];
 
+  get-section-depth = content: with lib; foldl'
+    (acc: elem:
+      if isAttrs elem
+      then max acc (lib.head (attrValues elem)).section-depth
+      else acc # TODO: parse with e.g. https://github.com/remarkjs/remark to avoid raw strings
+    ) 0
+    content;
+
   # base type for all DOM elements
-  element = { name, config, ... }: {
+  element = { ... }: {
     # TODO: add fields for upstream documentation references
     # TODO: programmatically generate documentation
     options = with lib; {
@@ -37,6 +46,15 @@ let
         internal = true;
         type = with types; functionTo str;
       };
+    };
+  };
+
+  # TODO: rename to something about sectioning
+  content-element = { ... }: {
+    options.section-depth = mkOption {
+      type = types.ints.unsigned;
+      default = 0;
+      internal = true;
     };
   };
 
@@ -53,7 +71,7 @@ let
       (category:
         (mapAttrs (_: e: mkOption { type = types.submodule e; })
           # HACK: don't evaluate the submodule types, just grab the config directly
-          (filterAttrs (_: e: elem category (e { name = "dummy"; }).config.categories) elements))
+          (filterAttrs (_: e: elem category (e { name = "dummy"; config = { }; }).config.categories) elements))
       );
 
   global-attrs = lib.mapAttrs (name: value: mkOption value) {
@@ -140,6 +158,7 @@ let
           attrs)
       );
     in
+    if attrs == null then throw "wat" else
     optionalString (stringLength result > 0) " " + result
   ;
 
@@ -310,7 +329,7 @@ let
 
     link = { name, ... }: {
       imports = [ element ];
-      options = mkAttrs {
+      options = global-attrs // {
         # TODO: more attributes
         # https://html.spec.whatwg.org/multipage/semantics.html#the-link-element:concept-element-attributes
         inherit (attrs) href;
@@ -349,21 +368,104 @@ let
       config.__toString = self: "<link${print-attrs self}>";
     };
 
-    body = { name, ... }: {
-      imports = [ element ];
+    body = { config, name, ... }: {
+      imports = [ element content-element ];
       options = {
         attrs = mkAttrs { };
         content = mkOption {
           type = with types;
             # HACK: bail out for now
             # TODO: find a reasonable cut-off for where to place raw content
-            either str (listOf (attrTag categories.flow));
+            listOf (either str (attrTag categories.flow));
+          default = [ ];
         };
       };
+      config.section-depth = get-section-depth config.content;
       config.categories = [ ];
       config.__toString = self: with lib;
-        if isList self.content then join "\n" (toString self.content) else self.content;
+        print-element name self.attrs (
+          join "\n" (map
+            (e:
+              if isAttrs e
+              then toString (lib.head (attrValues e))
+              else e
+            )
+            self.content)
+        );
+    };
+    section = { config, name, ... }: {
+      imports = [ element content-element ];
+      options = {
+        # setting to an attribute set will wrap the section in <section>
+        attrs = mkOption {
+          type = with types; nullOr (submodule { options = global-attrs; });
+          default = null;
+        };
+        # TODO: make `pre-`/`post-heading` wrap the heading in `<hgroup>` if non-empty
+        # https://html.spec.whatwg.org/multipage/sections.html#the-hgroup-element
+        pre-heading = mkOption {
+          type = with types; listOf (attrTag ({ inherit p; } // categories.scripting));
+          default = [ ];
+        };
+        heading = mkOption {
+          type = with types; submodule ({ ... }: {
+            imports = [ element ];
+            options = {
+              attrs = mkAttrs { };
+              content = mkOption {
+                type = with types; either str (listOf (attrTag categories.phrasing));
+              };
+            };
+          });
+        };
+        post-heading = mkOption {
+          type = with types;
+            listOf (attrTag ({ inherit p; } // categories.scripting));
+          default = [ ];
+        };
+        # https://html.spec.whatwg.org/multipage/sections.html#headings-and-outlines
+        content = mkOption {
+          type = with types; listOf (either str (attrTag categories.flow));
+          default = [ ];
+        };
+      };
+      config.section-depth = get-section-depth config.content + 1;
+      options.heading-level = mkOption {
+        # XXX: this will proudly fail if the invariant is violated,
+        #      but the error message will be inscrutable
+        type = with types; ints.between 1 6;
+        internal = true;
+      };
+      config.heading-level = cfg.section-depth - config.section-depth + 1;
+      config.categories = [ "flow" "sectioning" "palpable" ];
+      config.__toString = self: with lib;
+        let
+          n = toString config.heading-level;
+          content =
+            "<h${n}${print-attrs self.heading.attrs}>${self.heading.content}</h${n}>" + join "\n" (map
+              (e:
+                if isAttrs e
+                then toString (lib.head (attrValues e))
+                else e
+              )
+              self.content);
+        in
+        if !isNull self.attrs
+        then print-element name self.attrs content
+        else content;
     };
   };
 in
-elements
+{
+  imports = [ element content-element ];
+  options = {
+    inherit (element-types) html;
+  };
+
+  config.section-depth = config.html.body.section-depth;
+  config.categories = [ ];
+  config.__toString = self: ''
+    <!DOCTYPE HTML >
+    ${self.html}
+  '';
+}
