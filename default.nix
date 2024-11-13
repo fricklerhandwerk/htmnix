@@ -8,7 +8,11 @@
 , lib ? import "${sources.nixpkgs}/lib"
 }:
 let
-  lib' = final: prev: import ./lib.nix { lib = final; };
+  lib' = final: prev:
+    let
+      new = import ./lib.nix { lib = final; };
+    in
+    new // { types = prev.recursiveUpdate prev.types new.types; };
   lib'' = lib.extend lib';
 in
 {

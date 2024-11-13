@@ -5,7 +5,7 @@ let
     types
     ;
   cfg = config;
-  types' = import ./types.nix { inherit lib; } // {
+  types' = {
     article = { config, collectionName, ... }: {
       imports = [ types'.page ];
       options = {
@@ -115,7 +115,7 @@ in
           };
           entry = mkOption {
             description = "An entry in the collection";
-            type = types'.collection (types.submodule ({
+            type = types.collection (types.submodule ({
               _module.args.collection = config.entry;
               _module.args.collectionName = name;
               imports = [ config.type ];

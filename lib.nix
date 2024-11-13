@@ -37,4 +37,48 @@ rec {
 
   indent = prefix: s:
     join "\n" (map (x: if x == "" then x else "${prefix}${x}") (splitLines s));
+
+  types = rec {
+    collection = elemType:
+      let
+        unparenthesize = class: class == "noun";
+        desc = type:
+          types.optionDescriptionPhrase unparenthesize type;
+        desc' = type:
+          let
+            typeDesc = lib.types.optionDescriptionPhrase unparenthesize type;
+          in
+          if type.descriptionClass == "noun"
+          then
+            typeDesc + "s"
+          else
+            "many instances of ${typeDesc}";
+      in
+      lib.types.mkOptionType {
+        name = "collection";
+        description = "separately specified ${desc elemType} for a collection of ${desc' elemType}";
+        merge = loc: defs:
+          map
+            (def:
+              let
+                merged = lib.mergeDefinitions
+                  (loc ++ [ "[definition ${toString def.file}]" ])
+                  elemType
+                  [{ inherit (def) file; value = def.value; }];
+              in
+              if merged ? mergedValue then merged.mergedValue else merged.value
+            )
+            defs;
+        check = elemType.check;
+        getSubOptions = elemType.getSubOptions;
+        getSubModules = elemType.getSubModules;
+        substSubModules = m: collection (elemType.substSubModules m);
+        functor = (lib.defaultFunctor "collection") // {
+          type = collection;
+          wrapped = elemType;
+          payload = { };
+        };
+        nestedTypes.elemType = elemType;
+      };
+  };
 }
