@@ -95,12 +95,12 @@ in
         };
         date = mkOption {
           description = "Publication date";
-          type = with types; nullOr str;
+          type = with types; str;
           default = null;
         };
         author = mkOption {
           description = "Page author";
-          type = with types; nullOr (either str (listOf str));
+          type = with types; either str (nonEmptyListOf str);
           default = null;
         };
       };

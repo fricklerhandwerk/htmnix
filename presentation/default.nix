@@ -49,7 +49,10 @@ in
         head = ''
           <title>${page.title}</title>
           <meta name="description" content="${page.description}" />
-          <meta name="author" content="${with lib; if isList page.author then join ", " page.author else page.author}" />
+          ${with lib; join "\n" (map
+          (author: ''<meta name="author" content="${author}" />'')
+          (if isList page.author then page.author else [page.author]))
+          }
         '';
         body = ''
           ${templates.nav { menu = { menu = config.menus.main; }; }}
