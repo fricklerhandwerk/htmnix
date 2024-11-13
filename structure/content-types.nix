@@ -17,7 +17,7 @@ in
     page = { name, config, ... }: {
       options = {
         name = mkOption {
-          description = "Symbolic name for the page, used as a human-readable identifier";
+          description = "Symbolic name, used as a human-readable identifier";
           type = types.str;
           default = name;
         };
@@ -92,6 +92,42 @@ in
       config.name = lib.slug config.title;
       config.outPath = "${collectionName}/${lib.head config.locations}";
       config.template = cfg.templates.article;
+    };
+
+    named-link = { ... }: {
+      options = {
+        label = mkOption {
+          description = "Link label";
+          type = types.str;
+        };
+        url = mkOption {
+          description = "Link URL";
+          type = types.str;
+        };
+      };
+    };
+
+    navigation = { name, ... }: {
+      options = {
+        name = mkOption {
+          description = "Symbolic name, used as a human-readable identifier";
+          type = types.str;
+          default = name;
+        };
+        label = mkOption {
+          description = "Menu label";
+          type = types.str;
+          default = name;
+        };
+        items = mkOption {
+          description = "List of menu items";
+          type = with types; listOf (attrTag {
+            menu = mkOption { type = submodule cfg.content-types.navigation; };
+            page = mkOption { type = submodule cfg.content-types.page; };
+            link = mkOption { type = submodule cfg.content-types.named-link; };
+          });
+        };
+      };
     };
   };
 }

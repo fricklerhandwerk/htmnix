@@ -54,4 +54,10 @@ in
       }));
     };
 
+  options.menus = mkOption {
+    description = ''
+      Collection navigation menus
+    '';
+    type = with types; attrsOf (submodule config.content-types.navigation);
+  };
 }

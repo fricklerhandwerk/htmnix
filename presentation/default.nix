@@ -37,7 +37,10 @@ in
             <meta name="description" content="${page.description}" />
             <link rel="canonical" href="${page.outPath}" />
           '';
-          body = builtins.readFile (commonmark page.name page.body);
+          body = ''
+            ${templates.nav { menu = { menu = config.menus.main; }; }}
+            ${builtins.readFile (commonmark page.name page.body)}
+          '';
         });
       });
       article = lib.mkDefault (config: page: {
@@ -48,7 +51,10 @@ in
             <meta name="description" content="${page.description}" />
             <meta name="author" content="${with lib; if isList page.author then join ", " page.author else page.author}" />
           '';
-          body = builtins.readFile (commonmark page.name page.body);
+          body = ''
+            ${templates.nav { menu = { menu = config.menus.main; }; }}
+            ${builtins.readFile (commonmark page.name page.body)}
+          '';
         });
       });
     };
