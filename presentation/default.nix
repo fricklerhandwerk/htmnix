@@ -41,7 +41,7 @@ in
           <link rel="canonical" href="${page.outPath}" />
         '';
         body = ''
-          ${templates.nav { menu = { menu = config.menus.main; }; }}
+          ${templates.nav { inherit page; menu = { menu = config.menus.main; }; }}
           ${builtins.readFile (commonmark page.name page.body)}
         '';
       });
@@ -55,7 +55,7 @@ in
           }
         '';
         body = ''
-          ${templates.nav { menu = { menu = config.menus.main; }; }}
+          ${templates.nav { inherit page; menu = { menu = config.menus.main; }; }}
           ${builtins.readFile (commonmark page.name page.body)}
         '';
       });
@@ -76,20 +76,13 @@ in
     let
       pages = lib.attrValues config.pages;
       collections = with lib; concatMap (collection: collection.entry) (attrValues config.collections);
-      collections' = with lib; map
-        (
-          entry: recursiveUpdate entry {
-            locations = map (l: "${entry.collection.name}/${l}") entry.locations;
-          }
-        )
-        collections;
     in
     with lib; foldl
       (acc: elem: acc // {
         "${head elem.locations}" = builtins.toFile "${elem.name}.html" elem.outputs.html;
       })
       { }
-      (pages ++ collections');
+      (pages ++ collections);
 
   options.build = mkOption {
     description = ''

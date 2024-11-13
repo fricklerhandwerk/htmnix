@@ -14,23 +14,23 @@ rec {
       <body>
     </html>
   '';
-  nav = { menu }:
+  nav = { page, menu }:
     let
       render-item = item:
         if item ? menu then
           ''
             <li>${item.menu.label}
-            ${lib.indent "  " (nav { menu = item; })}
+            ${lib.indent "  " (nav { inherit page; menu = item; })}
           ''
         else
-          if item ? page then ''<li><a href="${item.page}">${item.page.title}</a></li>''
+          if item ? page then ''<li><a href="${page.link item.page}">${item.page.title}</a></li>''
           else ''<li><a href="${item.link.url}">${item.link.label}</a></li>''
       ;
     in
     ''
       <nav>
         <ul>
-        ${with lib; indent "    " (join "\n" (map render-item menu.menu.items))}
+          ${with lib; indent "    " (join "\n" (map render-item menu.menu.items))}
         </ul>
       </nav>
     '';

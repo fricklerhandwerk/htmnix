@@ -7,7 +7,7 @@ let
   cfg = config;
 in
 {
-  content-types. article = { config, collection, ... }: {
+  content-types.article = { config, collection, ... }: {
     imports = [ cfg.content-types.page ];
     options = {
       collection = mkOption {
@@ -27,9 +27,6 @@ in
       };
     };
     config.name = lib.slug config.title;
-    # TODO: this should be covered by the TBD `link` function instead,
-    #       taking a historical list of collection names into account
-    config.outPath = "${collection.name}/${lib.head config.locations}";
     config.outputs.html = lib.mkForce (cfg.templates.html.article cfg config);
   };
 }

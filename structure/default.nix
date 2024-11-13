@@ -52,13 +52,25 @@ in
             type = types.str;
             default = name;
           };
-          entry = mkOption {
-            description = "An entry in the collection";
-            type = types.collection (types.submodule ({
-              _module.args.collection = config;
-              imports = [ config.type ];
-            }));
+          prefixes = mkOption {
+            description = ''
+              List of historic output locations for files in the collection
+
+              The first element is the canonical location.
+              All other elements are used to create redirects to the canonical location.
+            '';
+            type = with types; nonEmptyListOf str;
+            example = [ "." ];
           };
+          entry = mkOption
+            {
+              description = "An entry in the collection";
+              type = types.collection (types.submodule ({
+                imports = [ config.type ];
+                _module.args.collection = config;
+                process-locations = ls: with lib; concatMap (l: map (p: "${p}/${l}") config.prefixes) ls;
+              }));
+            };
         };
       }));
     };

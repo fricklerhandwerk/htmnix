@@ -52,16 +52,17 @@ rec {
       inherit (lib) lists;
 
       path1 = subpath.components path1';
+      prefix1 = with lib; take (length path1 - 1) path1;
       path2 = subpath.components path2';
+      prefix2 = with lib; take (length path1 - 1) path2;
 
       commonPrefixLength = with lists;
         findFirstIndex (i: i.fst != i.snd)
-          { fst = null; snd = null; }
-          (zipLists path1 path2);
+          (length prefix1)
+          (zipLists prefix1 prefix2);
 
       relativeComponents = with lists;
-        [ "." ] ++ (replicate (length path1 - commonPrefixLength - 1) "..") ++
-        (drop commonPrefixLength path2);
+        [ "." ] ++ (replicate (length prefix1 - commonPrefixLength) "..") ++ (drop commonPrefixLength path2);
     in
     join "/" relativeComponents;
 
@@ -98,13 +99,7 @@ rec {
         merge = loc: defs:
           map
             (def:
-              let
-                merged = lib.mergeDefinitions
-                  (loc ++ [ "[definition ${toString def.file}]" ])
-                  elemType
-                  [{ inherit (def) file; value = def.value; }];
-              in
-              if merged ? mergedValue then merged.mergedValue else merged.value
+              elemType.merge (loc ++ [ "[definition ${toString def.file}]" ]) [{ inherit (def) file; value = def.value; }]
             )
             defs;
         check = elemType.check;

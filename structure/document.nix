@@ -6,7 +6,7 @@ let
     ;
 in
 {
-  content-types.document = { name, config, link, ... }: {
+  content-types.document = { name, config, options, link, ... }: {
     config._module.args.link = config.link;
     options = {
       name = mkOption {
@@ -17,7 +17,6 @@ in
       # TODO: reconsider using `page.outPath` and what to put into `locations`.
       #       maybe we can avoid having ".html" suffixes there.
       #       since templates can output multiple files, `html` is merely one of many things we *could* produce.
-      # TODO: make `apply` configurable so one can programmatically modify locations
       locations = mkOption {
         description = ''
           List of historic output locations for the resulting file
@@ -26,11 +25,17 @@ in
           All other elements are used to create redirects to the canonical location.
         '';
         type = with types; nonEmptyListOf str;
+        apply = config.process-locations;
+      };
+      process-locations = mkOption {
+        description = "Function to post-process the output locations of contained document";
+        type = types.functionTo options.locations.type;
+        default = lib.id;
       };
       link = mkOption {
         description = "Helper function for transparent linking to other pages";
         type = with types; functionTo str;
-        default = target: with lib; relativePath (head config.locations) (head target.locations);
+        default = target: with lib; relativePath config.outPath target.outPath;
       };
       # TODO: may not need it when using `link`; could repurpose it to render the default template
       outPath = mkOption {

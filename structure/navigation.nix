@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, options, lib, ... }:
 let
   inherit (lib)
     mkOption
@@ -7,7 +7,12 @@ let
   cfg = config;
   subtype = baseModule: types.submodule [
     baseModule
-    { _module.freeformType = types.attrs; }
+    {
+      _module.freeformType = types.attrs;
+      # XXX: this is supposed to be used with a finished value,
+      #      and we don't want to process locations again.
+      process-locations = lib.mkForce lib.id;
+    }
   ];
 in
 {
