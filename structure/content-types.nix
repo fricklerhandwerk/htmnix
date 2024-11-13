@@ -14,15 +14,11 @@ in
     };
   };
   config.content-types = {
-    page = { name, config, ... }: {
+    document = { name, config, ... }: {
       options = {
+
         name = mkOption {
           description = "Symbolic name, used as a human-readable identifier";
-          type = types.str;
-          default = name;
-        };
-        title = mkOption {
-          description = "Page title";
           type = types.str;
           default = name;
         };
@@ -40,12 +36,35 @@ in
           type = with types; functionTo str;
           default = target: "TODO: compute the relative path based on `locations`";
         };
+        # TODO: may not need it when using `link`; could repurpose it to render the default template
         outPath = mkOption {
           description = ''
             Location of the page, used for transparently creating links
           '';
           type = types.str;
           default = lib.head config.locations;
+        };
+        # TODO: maybe it would even make sense to split routing and rendering altogether.
+        #       in that case, templates would return strings, and a different
+        #       piece of the machinery resolves rendering templates to files
+        #       using `locations`.
+        #       then we'd have e.g. `templates.html` and `templates.atom` for
+        #       different output formats.
+        template = mkOption {
+          description = ''
+            Function that converts the page contents to files
+          '';
+          type = with types; functionTo (functionTo options.files.type);
+        };
+      };
+    };
+    page = { name, config, ... }: {
+      imports = [ cfg.content-types.document ];
+      options = {
+        title = mkOption {
+          description = "Page title";
+          type = types.str;
+          default = name;
         };
         description = mkOption {
           description = ''
@@ -65,14 +84,8 @@ in
           '';
           type = types.str;
         };
-        template = mkOption {
-          description = ''
-            Function that converts the page contents to files
-          '';
-          type = with types; functionTo (functionTo options.files.type);
-          default = cfg.templates.page;
-        };
       };
+      config.template = cfg.templates.page;
     };
 
     article = { config, collectionName, ... }: {
@@ -91,7 +104,7 @@ in
       };
       config.name = lib.slug config.title;
       config.outPath = "${collectionName}/${lib.head config.locations}";
-      config.template = cfg.templates.article;
+      config.template = lib.mkForce cfg.templates.article;
     };
 
     named-link = { ... }: {
