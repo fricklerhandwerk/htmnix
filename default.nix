@@ -8,11 +8,18 @@
 , lib ? import "${sources.nixpkgs}/lib"
 ,
 }:
-let
-  site = pkgs.callPackage ./site.nix { };
-in
 {
-  build = site.build "fediversity.eu" ./content;
+  build =
+    let
+      result = pkgs.lib.evalModules {
+        modules = [
+          ./structure
+          ./content
+          { _module.args = { inherit pkgs; }; }
+        ];
+      };
+    in
+    result.config.build;
 
   shell = pkgs.mkShellNoCC {
     packages = with pkgs; [
