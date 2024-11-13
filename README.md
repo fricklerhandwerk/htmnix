@@ -15,6 +15,11 @@ Structured content is managed through Nix expressions, and copy is written in [C
 - [Install Nix](https://nix.dev/install-nix)
 - [Set up `direnv`](https://github.com/nix-community/nix-direnv#installation)
 - Run `direnv allow` in the directory where repository is stored on your machine
+
+  > **Note**
+  >
+  > This is a security boundary, and allows automatically running code from this repository on your machine.
+
 - Start a live preview in a different terminal:
 
   ```bash
