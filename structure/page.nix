@@ -60,9 +60,14 @@ in
         ];
       };
       body.content = [
-        (cfg.menus.main.outputs.html page)
+        ''
+          <header>
+            ${lib.indent "  " (cfg.menus.main.outputs.html page)}
+          </header>
+        ''
         {
           section = {
+            attrs = { };
             heading.content = page.title;
             content = [
               (cfg.templates.html.markdown { inherit (page) name body; })

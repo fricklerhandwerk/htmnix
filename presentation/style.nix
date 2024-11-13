@@ -1,5 +1,8 @@
 { config, lib, pkgs, ... }: {
   config.assets."style.css".path = ./style.css;
+  config.assets."ngi-fediversity.svg".path = ./ngi-fediversity.svg;
+  # TODO: auto-generate a bunch from SVG
+  config.assets."favicon.png".path = ./favicon.png;
   config.assets."fonts.css".path = with lib; builtins.toFile "fonts.css" (join "\n" (map
     (font: ''
       @font-face {

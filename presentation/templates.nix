@@ -33,7 +33,7 @@ in
       let
         render-item = item:
           if item ? menu then ''
-            <li>${item.menu.label}
+            <li><span>${item.menu.label}</span>
               ${lib.indent "  " (item.menu.outputs.html page)}
             </li>
           ''

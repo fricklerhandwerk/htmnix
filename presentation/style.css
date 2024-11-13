@@ -1,12 +1,134 @@
+:root {
+  /* XXX: maybe use light-dark() once it's more widely supported */
+  color-scheme: light dark;
+  --highlight: rgb(255, 110, 0);
+  --background: white;
+  --text-color: black;
+  --shadow: rgba(0,0,0,0.1);
+  scrollbar-gutter: stable;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: black;
+    --text-color: #f0f0f0;
+    --shadow: rgba(255,255,255,0.2);
+  }
+}
+
 body {
   font-family: Heebo, sans-serif;
-  padding: 1em;
+  color: var(--text-color);
+  background-color: var(--background);
+  padding: 0 1em;
+}
+
+section {
   max-width: 50em;
   margin: auto;
 }
 
-h1, h2, h3, h4, h5, h6
-{
+h1, h2, h3, h4, h5, h6 {
   font-family: Signika, sans-serif;
 }
 
+h1 {
+  font-size: 2em;
+}
+
+header > nav {
+  margin: 1em;
+  font-family: Signika, sans-serif;
+}
+
+a:visited,
+a
+{
+  color: var(--highlight);
+  text-decoration: none;
+}
+
+header a:visited,
+header a
+{
+  color: var(--text-color);
+}
+
+header a {
+  text-decoration: none;
+}
+
+header a:hover,
+header span:hover
+{
+  color: var(--highlight);
+}
+
+header nav ul {
+  padding: 0;
+}
+
+header > nav ul li {
+  list-style-type: none;
+}
+
+header > nav > ul {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 60em;
+  margin: auto;
+}
+
+header > nav > ul > li:first-child a {
+  content: url('ngi-fediversity.svg');
+  display: inline-block;
+  height: 2em;
+  margin-right: 4em;
+}
+
+header > nav > ul > li:last-child > a {
+  border: 1pt solid var(--text-color);
+  padding: 0.5em 1em 0.5em 1em;
+  border-radius: 3pt;
+  margin-left: 4em;
+}
+
+header > nav > ul > li:last-child:hover > a {
+  color: var(--background);
+  background-color: var(--highlight);
+  border-color: var(--background);
+}
+
+header > nav > ul > li > span {
+  position: relative;
+  cursor: pointer;
+  /* same as nav margin to bridge the gap for hovering */
+  padding: 1em 0;
+}
+
+header > nav > ul > li > nav {
+  display: none;
+  position: absolute;
+  margin-top: 1em;
+  background: var(--background);
+  min-width: max-content;
+  padding: 0.5em;
+  box-shadow: 0 0 1em var(--shadow);
+  z-index: 1;
+}
+
+header > nav > ul > li > span:hover + nav,
+header > nav > ul > li > nav:hover {
+  display: block;
+}
+
+/* Optional: Style the dropdown items */
+header > nav > ul > li > nav ul li {
+  padding: 0.25em 0.5em;
+}
+
+/* Position the parent li relatively for absolute positioning context */
+header > nav > ul > li {
+  position: relative;
+}
