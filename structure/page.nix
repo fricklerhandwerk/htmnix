@@ -14,15 +14,8 @@ in
     '';
     type = with types; attrsOf (submodule config.content-types.page);
   };
-  config.files = with lib;
-    foldl'
-      (acc: elem: acc // {
-        # TODO: create static redirects from `tail page.locations`
-        # TODO: the file name could correspond to the canonical location in the HTML representation
-        "${head elem.locations}.html" = builtins.toFile "${elem.name}.html" "${elem.outputs.html}";
-      })
-      { }
-      (attrValues config.pages);
+
+  config.files = with lib; cfg.templates.files (attrValues config.pages);
 
   config.content-types.page = { name, config, ... }: {
     imports = [ cfg.content-types.document ];

@@ -47,11 +47,28 @@ in
       };
       link = mkOption {
         description = "Helper function for transparent linking to other pages";
-        type = with types; functionTo str;
+        type = with types; functionTo attrs;
         # TODO: we may want links to other representations,
         #       and currently the mapping of output types to output file
         #       names is soft.
-        default = target: with lib; "${relativePath (head config.locations) (head target.locations)}.html";
+        default = with lib; target:
+          let
+            path = relativePath (head config.locations) (head target.locations);
+            links = mapAttrs
+              (type: output:
+                path + optionalString (type != "") ".${type}"
+                #                     ^^^^^^^^^^^^
+                #               convention for raw files
+              )
+              target.outputs;
+          in
+          if length (attrValues links) == 0
+          then throw "no output to link to for '${target.name}'"
+          else if length (attrValues links) == 1
+          then links // {
+            __toString = _: head (attrValues links);
+          }
+          else links;
       };
       outputs = mkOption {
         description = ''

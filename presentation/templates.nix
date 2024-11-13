@@ -49,4 +49,17 @@ in
         </nav>
       '';
   };
+
+  config.templates.files = fs: with lib;
+    foldl'
+      # TODO: create static redirects from `tail <collection>.locations`
+      (acc: elem: acc // (mapAttrs' (type: value: {
+        name = head elem.locations + optionalString (type != "") ".${type}";
+        value = builtins.toFile
+          (elem.name + optionalString (type != "") ".${type}")
+          (toString value);
+      }))
+        elem.outputs)
+      { }
+      fs;
 }

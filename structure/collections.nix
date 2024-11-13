@@ -61,15 +61,11 @@ in
       };
     }));
   };
+
   config.files =
-    # TODO: create static redirects from `tail <collection>.locations`
+    with lib;
     let
-      collections = with lib; concatMap (collection: collection.entry) (attrValues config.collections);
+      collections = concatMap (collection: collection.entry) (attrValues config.collections);
     in
-    with lib; foldl
-      (acc: elem: acc // {
-        "${head elem.locations}.html" = builtins.toFile "${elem.name}.html" "${elem.outputs.html}";
-      })
-      { }
-      collections;
+    cfg.templates.files collections;
 }
