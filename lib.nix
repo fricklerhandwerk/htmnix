@@ -10,7 +10,7 @@
         {
           name = html;
           value = pkgs.runCommand html { buildInputs = with pkgs; [ cmark ]; } ''
-            cmark ${builtins.toFile md (import "${dir}/${name}").body} > $out
+            cmark ${builtins.toFile md (import (dir + "/${name}")).body} > $out
           '';
         }
     )
