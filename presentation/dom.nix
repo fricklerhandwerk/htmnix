@@ -69,6 +69,7 @@ let
       default = false;
     };
     id = {
+      # TODO: would be cool if we could enforce unique IDs per document
       type = with types; nullOr nonEmptyStr;
       default = null;
     };
@@ -92,7 +93,35 @@ let
     # https://html.spec.whatwg.org/multipage/microdata.html#encoding-microdata
   };
 
+  # all possible attributes to `<link>` elements.
+  # since not all of them apply to each `rel=` type, the separate implementations can pick from this collection
+  link-attrs = lib.mapAttrs (name: value: mkOption value) {
+    href = {
+      # TODO: implement https://html.spec.whatwg.org/multipage/semantics.html#the-link-element:attr-link-href-3
+      # TODO: https://url.spec.whatwg.org/#valid-url-string
+      type = types.nonEmptyStr;
+    };
+    media = {
+      # TODO: https://drafts.csswg.org/mediaqueries/#media
+      #       it's awsome we have that standard, but ugh so much work
+      #       ;..S
+      #       Clay seems to do it right: https://github.com/sebastiaanvisser/clay
+      type = with types; nullOr str;
+      default = null;
+    };
+    integrity = {
+      # TODO: implement https://w3c.github.io/webappsec-subresource-integrity/
+      type = with types; nullOr str;
+      default = null;
+    };
+    # TODO: more attributes
+    #       https://html.spec.whatwg.org/multipage/semantics.html#the-link-element:concept-element-attributes
+  };
+
+  # TODO: not sure where to put these, since so far they apply to multiple elements,
+  #       but have the same properties for all of them
   attrs = lib.mapAttrs (name: value: mkOption value) {
+    # TODO: investigate: `href` may be coupled with other attributes such as `target` or `hreflang`, this could simplify things
     href = {
       # TODO: https://url.spec.whatwg.org/#valid-url-string
       # ;..O
@@ -155,6 +184,8 @@ let
         ${lib.indent "  " content}
       </${name}>
     '');
+
+  print-element' = name: attrs: "<${name}${print-attrs attrs}>";
 
   toString-unwrap = e:
     with lib;
@@ -270,9 +301,15 @@ let
           type = with types; nullOr str;
           default = null;
         };
+        # TODO: this one has more internal structure, e.g with hreflang
+        # TODO: print in output
         link.canonical = mkOption {
           type = with types; nullOr str;
           default = null;
+        };
+        link.stylesheets = mkOption {
+          type = types.listOf (submodule stylesheet);
+          default = [ ];
         };
 
         # TODO: figure out `meta` elements
@@ -291,13 +328,22 @@ let
           ${/* https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-http-equiv-x-ua-compatible */
           ""}<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-          <meta name="viewport" content="${join ", " (mapAttrsToList
-            (name: value: "${name}=${toString value}") self.meta.viewport)
-          }" />
+          ${print-element' "meta" {
+            name = "viewport";
+            content =  "${join ", " (mapAttrsToList (name: value: "${name}=${toString value}") self.meta.viewport) }";
+          }}
 
           ${join "\n" (map
-              (author: ''<meta name="author" content="${author}" />'')
+              (author: print-element' "meta" {
+                name = "author";
+                content = "${author}";
+              })
             self.meta.authors)
+          }
+
+          ${join "\n" (map
+              (stylesheet: print-element' "link" ({ rel = "stylesheet"; } // (removeAttrs stylesheet [ "categories" "__toString" ])))
+            self.link.stylesheets)
           }
         '';
     };
@@ -350,7 +396,6 @@ let
               "prev"
               "privacy-policy"
               "search"
-              "stylesheet"
               "terms-of-service"
             ]
           );
@@ -360,6 +405,37 @@ let
       # https://html.spec.whatwg.org/multipage/semantics.html#allowed-in-the-body
       config.categories = [ "metadata" ];
       config.__toString = self: "<link${print-attrs self}>";
+    };
+
+    # <link rel="stylesheet"> is implemented separately because it can be used both in `<head>` and `<body>`
+    # semantically it's a standalone thing but syntactically happens to be subsumed under `<link>`
+    stylesheet = { config, name, ... }: {
+      imports = [ element ];
+      options = global-attrs // {
+        type = mkOption {
+          # TODO: this must be a valid MIME type string, which is a bit involved.
+          #       the syntax is explicated here: https://mimesniff.spec.whatwg.org/#mime-type-writing
+          #       but the spec refers to RFC9110: https://www.rfc-editor.org/rfc/rfc9110#name-media-type
+          #       all registered MIME types: https://www.iana.org/assignments/top-level-media-types/top-level-media-types.xhtml
+          # XXX: if nothing is specified, "text/css" is assumed.
+          #      https://html.spec.whatwg.org/multipage/links.html#link-type-stylesheet:link-type-stylesheet-2
+          #      there's no specification on what else could be there, and it's questionable whether setting anything else even makes sense.
+          #      in practice, browsers seem to ignore anything but "text/css", so we may as well not care at all.
+          type = with types; nullOr str;
+          default = null;
+        };
+        # https://html.spec.whatwg.org/multipage/semantics.html#attr-link-disabled
+        disabled = mkOption {
+          type = types.bool;
+          default = false;
+        };
+        # TODO: implement the rest of the stylesheet attributes
+        #       https://html.spec.whatwg.org/#link-type-stylesheet
+        inherit (link-attrs) href media integrity;
+      };
+      # https://html.spec.whatwg.org/multipage/links.html#link-type-stylesheet:body-ok
+      config.categories = [ "metadata" "phrasing" ];
+      config.__toString = self: print-attrs (removeAttrs self [ "categories" "__toString" ]);
     };
 
     body = { config, name, ... }: {
