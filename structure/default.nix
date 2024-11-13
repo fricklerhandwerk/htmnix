@@ -74,7 +74,7 @@ in
         description = ''
           Representations of the document in different formats
         '';
-        type = with types; attrsOf (either str attrs);
+        type = with types; attrsOf (either attrs pathInStore);
       };
     };
   };

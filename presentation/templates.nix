@@ -55,7 +55,8 @@ in
       # TODO: create static redirects from `tail <collection>.locations`
       (acc: elem: acc // (mapAttrs' (type: value: {
         name = head elem.locations + optionalString (type != "") ".${type}";
-        value = builtins.toFile
+        value = if isStorePath value then value else
+        builtins.toFile
           (elem.name + optionalString (type != "") ".${type}")
           (toString value);
       }))

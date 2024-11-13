@@ -54,6 +54,10 @@ in
         title.text = page.title;
         meta.description = page.description;
         link.canonical = lib.head page.locations;
+        link.stylesheets = [
+          { href = "${page.link cfg.assets."style.css"}"; }
+          { href = "${page.link cfg.assets."fonts.css"}"; }
+        ];
       };
       body.content = [
         (cfg.menus.main.outputs.html page)

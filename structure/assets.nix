@@ -16,8 +16,7 @@ in
       options.path = mkOption {
         type = types.path;
       };
-      config.name = builtins.baseNameOf config.path;
-      config.outputs."" = builtins.readFile config.path;
+      config.outputs."" = if lib.isStorePath config.path then config.path else "${config.path}";
     }));
     default = { };
   };
