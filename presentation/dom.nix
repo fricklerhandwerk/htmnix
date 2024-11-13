@@ -55,6 +55,7 @@ let
       (category:
         (mapAttrs (_: e: mkOption { type = submodule e; })
           # HACK: don't evaluate the submodule types, just grab the config directly
+          # TODO: we may want to do this properly and loop `categories` through the top-level `config`
           (filterAttrs (_: e: elem category (e { name = "dummy"; config = { }; }).config.categories) elements))
       );
 
@@ -520,6 +521,96 @@ let
       };
       config.categories = [ "flow" "palpable" ];
       config.__toString = self: print-element name self.attrs (toString self.content);
+    };
+
+    dl = { config, name, ... }: {
+      imports = [ element ];
+      options = {
+        attrs = mkAttrs { };
+        content = mkOption {
+          type = with types; listOf (submodule ({ ... }: {
+            options = {
+              # TODO: wrap in `<div>` if set
+              div.attrs = mkOption {
+                type = with types; nullOr (submodule { options = global-attrs; });
+                default = null;
+              };
+              before = mkOption {
+                type = with types; listOf (attrTag categories.scripting);
+                default = [ ];
+              };
+              terms = mkOption {
+                type = with types; nonEmptyListOf (submodule dt);
+              };
+              between = mkOption {
+                type = with types; listOf (attrTag categories.scripting);
+                default = [ ];
+              };
+              descriptions = mkOption {
+                type = with types; nonEmptyListOf (submodule dd);
+              };
+              after = mkOption {
+                type = with types; listOf (attrTag categories.scripting);
+                default = [ ];
+              };
+            };
+          }));
+        };
+      };
+      config.categories = [ "flow" ] ++ [ "palpable" ];
+      config.__toString = self:
+        with lib;
+        let
+          content = map
+            (entry:
+              let
+                list = squash ''
+                  ${join "\n" entry.before}
+                  ${join "\n" entry.terms}
+                  ${join "\n" entry.between}
+                  ${join "\n" entry.descriptions}
+                  ${join "\n" entry.after}
+                '';
+              in
+              if !isNull entry.div.attrs
+              then print-element "div" entry.div.attrs list
+              else list
+            )
+            self.content;
+        in
+        print-element name self.attrs (join "\n" content);
+    };
+
+    dt = { config, ... }: {
+      imports = [ element ];
+      options = {
+        attrs = mkAttrs { };
+        dt = mkOption {
+          type = with types; either str (submodule (attrTag (
+            # TODO: test
+            with lib; removeAttrs
+              (filterAttrs
+                (name: value: ! any (c: elem c [ "sectioning" "heading" ]) value.categories)
+                categories.flow
+              )
+              [ "header" "footer" ]
+          )));
+        };
+      };
+      config.categories = [ ];
+      config.__toString = self: print-element "dt" self.attrs self.dt;
+    };
+
+    dd = { config, ... }: {
+      imports = [ element ];
+      options = {
+        attrs = mkAttrs { };
+        dd = mkOption {
+          type = with types; either str (submodule (attrTag categories.flow));
+        };
+      };
+      config.categories = [ ];
+      config.__toString = self: print-element "dd" self.attrs self.dd;
     };
   };
 in
