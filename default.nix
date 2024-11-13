@@ -22,6 +22,7 @@ in
         modules = [
           ./structure
           ./content
+          ./presentation
           {
             _module.args = {
               inherit pkgs;
