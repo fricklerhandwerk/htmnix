@@ -4,19 +4,10 @@ let
     mkOption
     types
     ;
-  templates = import ./templates.nix { inherit lib; };
-  # TODO: optionally run the whole thing through the validator
-  # https://github.com/validator/validator
-  render-html = document:
-    let
-      eval = lib.evalModules {
-        class = "DOM";
-        modules = [ document (import ./dom.nix) ];
-      };
-    in
-    toString eval.config;
 in
 {
+  imports = lib.nixFiles ./.;
+
   options.templates =
     let
       # arbitrarily nested attribute set where the leaves are of type `type`
@@ -33,64 +24,14 @@ in
       type = recursiveAttrs (with types; functionTo (coercedTo attrs toString str));
     };
 
-  config.templates.html = {
-    markdown = { name, body }:
-      let
-        commonmark = pkgs.runCommand "${name}.html"
-          {
-            buildInputs = [ pkgs.cmark ];
-          } ''
-          cmark ${builtins.toFile "${name}.md" body} > $out
-        '';
-      in
-      builtins.readFile commonmark;
-    nav = { menu, page }:
-      let
-        render-item = item:
-          if item ? menu then ''
-            <li>${item.menu.label}
-              ${lib.indent "  " (item.menu.outputs.html page)}
-            </li>
-          ''
-          else if item ? page then ''<li><a href="${page.link item.page}">${item.page.title}</a></li>''
-          else ''<li><a href="${item.link.url}">${item.link.label}</a></li>''
-        ;
-      in
-      ''
-        <nav>
-          <ul>
-            ${with lib; indent "    " (join "\n" (map render-item menu.items))}
-          </ul>
-        </nav>
-      '';
-
-  };
-
   options.files = mkOption {
     description = ''
       Files that make up the site, mapping from output path to contents
 
-      By default, all elements in `option`{pages} are converted to files using their template or the default template.
       Add more files to the output by assigning to this attribute set.
     '';
-    # TODO: this should be attrsOf string-coercible instead.
-    #       we can convert this to file at the very end.
     type = with types; attrsOf path;
   };
-
-  config.files =
-    # TODO: create static redirects from `tail page.locations`
-    let
-      pages = lib.attrValues config.pages;
-      collections = with lib; concatMap (collection: collection.entry) (attrValues config.collections);
-    in
-    with lib; foldl
-      (acc: elem: acc // {
-        # TODO: we may or may not want to enforce the mapping of file types to output file name suffixes
-        "${head elem.locations}.html" = builtins.toFile "${elem.name}.html" elem.outputs.html;
-      })
-      { }
-      (pages ++ collections);
 
   options.build = mkOption {
     description = ''

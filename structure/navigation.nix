@@ -16,7 +16,14 @@ let
   ];
 in
 {
-  content-types.named-link = { ... }: {
+  options.menus = mkOption {
+    description = ''
+      Collection navigation menus
+    '';
+    type = with types; attrsOf (submodule config.content-types.navigation);
+  };
+
+  config.content-types.named-link = { ... }: {
     options = {
       label = mkOption {
         description = "Link label";
@@ -29,7 +36,7 @@ in
     };
   };
 
-  content-types.navigation = { name, config, ... }: {
+  config.content-types.navigation = { name, config, ... }: {
     options = {
       name = mkOption {
         description = "Symbolic name, used as a human-readable identifier";
