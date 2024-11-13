@@ -27,28 +27,26 @@ in
       };
     };
     config.name = lib.slug config.title;
-    config.outputs.html = lib.mkForce ((cfg.templates.html.page config).override {
-      html = {
-        # TODO: make authors always a list
-        head.meta.authors = if lib.isList config.author then config.author else [ config.author ];
-        body.content = lib.mkForce [
-          (cfg.menus.main.outputs.html config)
-          {
-            section = {
-              heading = {
-                # TODO: i18n support
-                # TODO: structured dates
-                before = [{ p.content = "Published ${config.date}"; }];
-                content = config.title;
-                after = [{ p.content = "Written by ${config.author}"; }];
-              };
-              content = [
-                (cfg.templates.html.markdown { inherit (config) name body; })
-              ];
-            };
-          }
-        ];
-      };
-    });
+    config.outputs.html = lib.mkForce
+      ((cfg.templates.html.page config).override (final: prev: {
+        html = {
+          # TODO: make authors always a list
+          head.meta.authors = if lib.isList config.author then config.author else [ config.author ];
+          body.content = with lib; map
+            (e:
+              if isAttrs e && e ? section
+              then
+                recursiveUpdate e
+                  {
+                    section.heading = {
+                      before = [{ p.content = "Published ${config.date}"; }];
+                      after = [{ p.content = "Written by ${config.author}"; }];
+                    };
+                  }
+              else e
+            )
+            prev.html.body.content;
+        };
+      }));
   };
 }

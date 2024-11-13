@@ -8,7 +8,11 @@ rec {
     result // {
       override = new:
         let
-          base' = lib.recursiveUpdate base new;
+          base' =
+            if lib.isFunction new
+            then lib.recursiveUpdate base (new base' base)
+            else
+              lib.recursiveUpdate base new;
           result' = g base';
         in
         result' // {
