@@ -16,6 +16,8 @@ let
   lib'' = lib.extend lib';
 in
 {
+  lib = import ./lib.nix { inherit lib; };
+
   build =
     let
       result = lib''.evalModules {
