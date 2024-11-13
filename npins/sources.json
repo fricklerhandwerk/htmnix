@@ -1,5 +1,17 @@
 {
   "pins": {
+    "devmode-reusable": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "fricklerhandwerk",
+        "repo": "nixpkgs"
+      },
+      "branch": "refactor-devmode",
+      "revision": "f0746a6690939987734d6519a2e3daf28ed36d87",
+      "url": "https://github.com/fricklerhandwerk/nixpkgs/archive/f0746a6690939987734d6519a2e3daf28ed36d87.tar.gz",
+      "hash": "011kg3c2mfy7y808llpmq3hf6vv6rlazx8m11w41pnym4kwr3ivz"
+    },
     "nixpkgs": {
       "type": "Channel",
       "name": "nixpkgs-unstable",

@@ -15,18 +15,15 @@ Structured content is managed through Nix expressions, and copy is written in [C
 - [Install Nix](https://nix.dev/install-nix)
 - [Set up `direnv`](https://github.com/nix-community/nix-direnv#installation)
 - Run `direnv allow` in the directory where repository is stored on your machine
-- Edit any of the files, see [repository layout](#repository-layout) for guidance
-- Build and view the web site
+- Start a live preview in a different terminal:
 
   ```bash
-  xdg-open $(nix-build -A build --no-out-link)/index.html
+  devmode
   ```
 
-  or
+  This will open your default web browser and automatically reload the page when the source changes.
 
-  ```fish
-  open (nix-build -A build --no-out-link)/index.html
-  ```
+- Edit any of the files, see [repository layout](#repository-layout) for guidance
 
 # Repository layout
 

@@ -14,6 +14,12 @@ let
     in
     new // { types = prev.recursiveUpdate prev.types new.types; };
   lib'' = lib.extend lib';
+  # TODO: update when the PR to expose `pkgs.devmode` is merged
+  #       https://github.com/NixOS/nixpkgs/pull/354556
+  devmode = pkgs.callPackage "${sources.devmode-reusable}/pkgs/by-name/de/devmode/package.nix" {
+    buildArgs = "${toString ./.} -A build";
+    open = "/index.html";
+  };
 in
 rec {
   lib = import ./lib.nix { inherit lib; };
@@ -36,6 +42,7 @@ rec {
     packages = with pkgs; [
       cmark
       npins
+      devmode
     ];
   };
 }
