@@ -7,7 +7,12 @@ let
   cfg = config;
 in
 {
-  imports = [ ./content-types.nix ];
+  imports = lib.nixFiles ./.;
+
+  options.content-types = mkOption {
+    description = "Content types";
+    type = with types; attrsOf deferredModule;
+  };
 
   # TODO: enable i18n, e.g. via a nested attribute for language-specific content
   options.pages = mkOption {
