@@ -52,7 +52,7 @@ in
         body.content = [
           (cfg.menus.main.outputs.html config)
           { section.heading.content = config.title; }
-          (cfg.templates.html.markdown config.name config.body)
+          (cfg.templates.html.markdown { inherit (config) name body; })
         ];
       };
     };

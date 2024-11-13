@@ -20,35 +20,31 @@ in
   options.templates =
     let
       # arbitrarily nested attribute set where the leaves are of type `type`
-      # NOTE: due to how `either` works, the first match is significant,
-      # so if `type` happens to be an attrset, the typecheck will consider
-      # `type`, not `attrsOf`
-      recursiveAttrs = type: with types; attrsOf (either type (recursiveAttrs type));
+      recursiveAttrs = type: with types;
+        # NOTE: due to how `either` works, the first match is significant,
+        # so if `type` happens to be an attrset, the typecheck will consider
+        # `type`, not `attrsOf`
+        attrsOf (either type (recursiveAttrs type));
     in
     mkOption {
       description = ''
-        Collection of named functions to convert document contents to a string representation
-
-        Each template function takes the complete site `config` and the document's data structure.
+        Collection of named helper functions for conversion different structured representations which can be rendered to a string
       '';
-      # TODO: this function should probably take a single attrs,
-      #       otherwise it's quite inflexible.
-      #       named parameters would also help with readability at the call site
-      type = recursiveAttrs (with types; functionTo (functionTo str));
+      type = recursiveAttrs (with types; functionTo (coercedTo attrs toString str));
     };
 
   config.templates.html = {
-    markdown = name: text:
+    markdown = { name, body }:
       let
         commonmark = pkgs.runCommand "${name}.html"
           {
             buildInputs = [ pkgs.cmark ];
           } ''
-          cmark ${builtins.toFile "${name}.md" text} > $out
+          cmark ${builtins.toFile "${name}.md" body} > $out
         '';
       in
       builtins.readFile commonmark;
-    nav = menu: page:
+    nav = { menu, page }:
       let
         render-item = item:
           if item ? menu then ''
