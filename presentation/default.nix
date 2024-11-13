@@ -9,19 +9,11 @@ in
   imports = lib.nixFiles ./.;
 
   options.templates =
-    let
-      # arbitrarily nested attribute set where the leaves are of type `type`
-      recursiveAttrs = type: with types;
-        # NOTE: due to how `either` works, the first match is significant,
-        # so if `type` happens to be an attrset, the typecheck will consider
-        # `type`, not `attrsOf`
-        attrsOf (either type (recursiveAttrs type));
-    in
     mkOption {
       description = ''
         Collection of named helper functions for conversion different structured representations which can be rendered to a string
       '';
-      type = recursiveAttrs (with types; functionTo (either str attrs));
+      type = with types; recursiveAttrs (functionTo (either str attrs));
     };
 
   options.files = mkOption {

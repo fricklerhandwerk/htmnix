@@ -128,6 +128,15 @@ rec {
     );
 
   types = rec {
+    # arbitrarily nested attribute set where the leaves are of type `type`
+    # NOTE: this works for anything but attribute sets!
+    recursiveAttrs = type: with lib.types;
+      # NOTE: due to how `either` works, the first match is significant,
+      # so if `type` happens to be an attrset, the typecheck will consider
+      # `type`, not `attrsOf`
+      attrsOf (either type (recursiveAttrs type));
+
+    # collection of unnamed items that can be added to item-wise, i.e. without wrapping the item in a list
     collection = elemType:
       let
         unparenthesize = class: class == "noun";
