@@ -20,6 +20,20 @@ in
     {
       description = ''
         Named collections of unnamed pages
+
+        Define the content type of a new collection `example` to be `article`:
+
+        ```nix
+        config.collections.example.type = config.types.article;
+        ```
+
+        Add a new entry to the `example` collection:
+
+        ```nix
+        config.collections.example.entry = {
+          # contents here
+        }
+        ```
       '';
       type = with types; attrsOf (submodule ({ name, config, ... }: {
         options = {
