@@ -113,5 +113,32 @@ rec {
         };
         nestedTypes.elemType = elemType;
       };
+
+    listOfUnique = elemType:
+      let
+        baseType = lib.types.listOf elemType;
+      in
+      baseType // {
+        merge = loc: defs:
+          let
+            # Keep track of which definition each value came from
+            defsWithValues = map
+              (def:
+                map (v: { inherit (def) file; value = v; }) def.value
+              )
+              defs;
+            flatDefs = lib.flatten defsWithValues;
+
+            # Check for duplicates while preserving source info
+            seen = builtins.foldl'
+              (acc: def:
+                if lib.lists.any (v: v.value == def.value) acc
+                then throw "The option `${lib.options.showOption loc}` has duplicate values (${toString def.value}) defined in ${def.file}"
+                else acc ++ [ def ]
+              ) [ ]
+              flatDefs;
+          in
+          map (def: def.value) seen;
+      };
   };
 }
