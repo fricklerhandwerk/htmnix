@@ -127,8 +127,10 @@ header > nav > ul > li > details > nav ul li {
   padding: 0.25em 0;
 }
 
-#menu-toggle {
+#menu-toggle,
+#menu-toggle + label {
   display: none;
+  appearance: none;
 }
 
 @media (max-width: 50em) {
@@ -136,14 +138,22 @@ header > nav > ul > li > details > nav ul li {
     display: block;
   }
 
-  #menu-toggle::before {
-    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 20 20'%3E%3Cpath d='M0 3h20v2H0V3z m0 6h20v2H0V9z m0 6h20v2H0V0z'/%3E%3C/svg%3E");
+  #menu-toggle ~ label {
+    position: absolute;
+    right: 1em;
+    top: 0.5em;
+    cursor: pointer;
     display: block;
   }
 
-  #menu-toggle:checked::before {
-    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 20 20'%3E%3Cpolygon points='11 9 22 9 22 11 11 11 11 22 9 22 9 11 -2 11 -2 9 9 9 9 -2 11 -2' transform='rotate(45 10 10)'/%3E%3C/svg%3E");
+  .menu-close,
+  .menu-open {
+    cursor: pointer;
+    fill: var(--text-color);
   }
+  .menu-close { display: none; }
+  #menu-toggle:checked + label .menu-close { display: block; }
+  #menu-toggle:checked + label .menu-open { display: none; }
 
   header > nav {
     margin-bottom: 1em;
@@ -209,15 +219,5 @@ header > nav > ul > li > details > nav ul li {
 
   header {
     position: relative;
-  }
-
-  /* for some reason this must be at the end to work */
-  #menu-toggle {
-    display: block;
-    position: absolute;
-    right: 1em;
-    top: 0.5em;
-    appearance: none;
-    cursor: pointer;
   }
 }
