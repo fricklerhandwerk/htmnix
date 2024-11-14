@@ -66,10 +66,10 @@ in
             <input type="checkbox" id="menu-toggle" hidden>
             <label for="menu-toggle" hidden>
               <svg class="menu-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 20 20">
-                <path d="M0 3h20v2H0V3z m0 6h20v2H0V9z m0 6h20v2H0V0z"/>
+               <path d="M0 4 H20 M0 10 H20 M0 16 H20" stroke="currentColor" stroke-width="2"/>
               </svg>
               <svg class="menu-close" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 20 20">
-                <polygon points="11 9 22 9 22 11 11 11 11 22 9 22 9 11 -2 11 -2 9 9 9 9 -2 11 -2" transform="rotate(45 10 10)"/>
+                <path d="M2 2L18 18M18 2L2 18" stroke="currentColor" stroke-width="2"/>
               </svg>
             </label>
             ${lib.indent "  " (cfg.menus.main.outputs.html page)}

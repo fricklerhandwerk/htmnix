@@ -149,7 +149,6 @@ header > nav > ul > li > details > nav ul li {
   .menu-close,
   .menu-open {
     cursor: pointer;
-    fill: var(--text-color);
   }
   .menu-close { display: none; }
   #menu-toggle:checked + label .menu-close { display: block; }
