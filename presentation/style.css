@@ -140,8 +140,8 @@ header > nav > ul > li > details > nav ul li {
 
   #menu-toggle ~ label {
     position: absolute;
-    right: 1em;
-    top: 0.5em;
+    right: 0;
+    padding: 0.5em;
     cursor: pointer;
     display: block;
   }
