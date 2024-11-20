@@ -505,7 +505,6 @@ let
                   else baseType.merge loc (map (p: p.def // { value = p.processed; }) processed);
               };
             in
-            # HACK: bail out for now
             with-section-constraints
               # TODO: find a reasonable cut-off for where to place raw content
               (listOf (either str (attrTag categories.flow)));
