@@ -99,20 +99,22 @@ rec {
   relativePath = path1': path2':
     let
       inherit (lib.path) subpath;
-      inherit (lib) lists;
+      inherit (lib) lists length take drop min max;
 
       path1 = subpath.components path1';
-      prefix1 = with lib; take (length path1 - 1) path1;
+      prefix1 = take (length path1 - 1) path1;
       path2 = subpath.components path2';
-      prefix2 = with lib; take (length path2 - 1) path2;
+      prefix2 = take (length path2 - 1) path2;
 
       commonPrefixLength = with lists;
         findFirstIndex (i: i.fst != i.snd)
-          (length prefix1)
+          (min (length prefix1) (length prefix2))
           (zipLists prefix1 prefix2);
 
+      depth = max 0 (length prefix1 - commonPrefixLength);
+
       relativeComponents = with lists;
-        [ "." ] ++ (replicate (length prefix1 - commonPrefixLength) "..") ++ (drop commonPrefixLength path2);
+        [ "." ] ++ (replicate depth "..") ++ (drop commonPrefixLength path2);
     in
     join "/" relativeComponents;
 
