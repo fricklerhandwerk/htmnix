@@ -22,8 +22,8 @@ let
   };
 in
 rec {
-  lib = import ./lib.nix { inherit lib; };
-  result = lib''.evalModules {
+  lib = lib'';
+  result = lib.evalModules {
     modules = [
       ./structure
       ./content
