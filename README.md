@@ -30,6 +30,26 @@ Structured content is managed through Nix expressions, and copy is written in [C
 
 - Edit any of the files, see [repository layout](#repository-layout) for guidance
 
+# Testing
+
+As a derivation, e.g. for CI:
+
+```bash
+nix-build -A tests
+```
+
+In the development shell:
+
+```bash
+run-tests
+```
+
+Running tests in a loop on source code changes:
+
+```bash
+test-loop
+```
+
 # Repository layout
 
 - [content](./content)

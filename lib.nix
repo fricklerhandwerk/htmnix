@@ -104,7 +104,7 @@ rec {
       path1 = subpath.components path1';
       prefix1 = with lib; take (length path1 - 1) path1;
       path2 = subpath.components path2';
-      prefix2 = with lib; take (length path1 - 1) path2;
+      prefix2 = with lib; take (length path2 - 1) path2;
 
       commonPrefixLength = with lists;
         findFirstIndex (i: i.fst != i.snd)
