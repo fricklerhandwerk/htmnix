@@ -25,7 +25,7 @@ in
         default = null;
       };
     };
-    config.name = lib.slug config.title;
+    config.name = with lib; mkDefault (slug config.title);
     config.outputs.html = lib.mkForce
       ((cfg.templates.html.page config).override (final: prev: {
         html = {

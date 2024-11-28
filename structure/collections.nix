@@ -52,11 +52,16 @@ in
         };
         entry = mkOption {
           description = "An entry in the collection";
-          type = types.collection (types.submodule ({
+          type = with types; collection (submodule ({
             imports = [ config.type ];
             _module.args.collection = config;
             process-locations = ls: with lib; concatMap (l: map (p: "${p}/${l}") config.prefixes) ls;
           }));
+        };
+        by-name = mkOption {
+          description = "Entries accessible by symbolic name";
+          type = with types; attrsOf attrs;
+          default = with lib; listToAttrs (map (e: { name = e.name; value = e; }) config.entry);
         };
       };
     }));
