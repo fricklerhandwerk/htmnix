@@ -14,11 +14,11 @@
     '')
     (
       (crossLists (name: file: weight: { inherit name file weight; })
-        [ [ "Signika " ] [ "signika-extended.woff2" "signika.woff2" ] [ 500 700 ] ]
+        [ [ "Signika" ] [ "signika-extended.woff2" "signika.woff2" ] [ 500 700 ] ]
       )
       ++
       (crossLists (name: file: weight: { inherit name file weight; })
-        [ [ "Heebo " ] [ "heebo-extended.woff2" "heebo.woff2" ] [ 400 600 ] ]
+        [ [ "Heebo" ] [ "heebo-extended.woff2" "heebo.woff2" ] [ 400 600 ] ]
       )
     )
   ));
