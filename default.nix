@@ -61,8 +61,32 @@ rec {
       ];
     };
 
-  tests = with pkgs; with lib; runCommand "run-tests" { } ''
-    touch $out
-    ${getExe nix-unit} ${./tests.nix} "$@"
-  '';
+  inherit sources pkgs;
+  tests = with pkgs; with lib;
+    let
+      source = fileset.toSource {
+        root = ./.;
+        fileset = fileset.unions [
+          ./default.nix
+          ./tests.nix
+          ./lib.nix
+          ./npins
+        ];
+      };
+    in
+    runCommand "run-tests"
+      {
+        buildInputs = [ pkgs.nix ];
+      }
+      ''
+        export HOME="$(realpath .)"
+        # HACK: nix-unit initialises its own entire Nix, so it needs a store to operate on,
+        # but since we're in a derivation, we can't fetch sources, so copy Nixpkgs manually here.
+        # `''${sources.nixpkgs}` resolves to `<hash>-source`,
+        # adding it verbatim will result in <hash'>-<hash>-source, so rename it first
+        cp -r ${sources.nixpkgs} source
+        nix-store --add --store "$HOME" source
+        ${getExe nix-unit} --gc-roots-dir "$HOME" --store "$HOME" ${source}/tests.nix "$@"
+        touch $out
+      '';
 }
