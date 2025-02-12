@@ -1,4 +1,4 @@
-{ sources ? import ./npins
+{ sources ? import ../npins
 , system ? builtins.currentSystem
 , pkgs ? import sources.nixpkgs {
     inherit system;
@@ -65,12 +65,12 @@ rec {
   tests = with pkgs; with lib;
     let
       source = fileset.toSource {
-        root = ./.;
+        root = ../.;
         fileset = fileset.unions [
           ./default.nix
           ./tests.nix
           ./lib.nix
-          ./npins
+          ../npins
         ];
       };
     in
@@ -86,7 +86,7 @@ rec {
         # adding it verbatim will result in <hash'>-<hash>-source, so rename it first
         cp -r ${sources.nixpkgs} source
         nix-store --add --store "$HOME" source
-        ${getExe nix-unit} --gc-roots-dir "$HOME" --store "$HOME" ${source}/tests.nix "$@"
+        ${getExe nix-unit} --gc-roots-dir "$HOME" --store "$HOME" ${source}/website/tests.nix "$@"
         touch $out
       '';
 }
