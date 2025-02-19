@@ -1,27 +1,53 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   config.assets."style.css".path = ./style.css;
   config.assets."ngi-fediversity.svg".path = ./ngi-fediversity.svg;
   # TODO: auto-generate a bunch from SVG
   config.assets."favicon.png".path = ./favicon.png;
-  config.assets."fonts.css".path = with lib; builtins.toFile "fonts.css" (join "\n" (map
-    (font: ''
-      @font-face {
-        font-family: '${font.name}';
-        font-style: normal;
-        font-weight: ${toString font.weight};
-        src: url(/${head config.assets.${font.file}.locations}) format('woff2');
-      }
-    '')
-    (
-      (crossLists (name: file: weight: { inherit name file weight; })
-        [ [ "Signika" ] [ "signika-extended.woff2" "signika.woff2" ] [ 500 700 ] ]
+  config.assets."fonts.css".path =
+    with lib;
+    builtins.toFile "fonts.css" (
+      join "\n" (
+        map
+          (font: ''
+            @font-face {
+              font-family: '${font.name}';
+              font-style: normal;
+              font-weight: ${toString font.weight};
+              src: url(/${head config.assets.${font.file}.locations}) format('woff2');
+            }
+          '')
+          (
+            (crossLists (name: file: weight: { inherit name file weight; }) [
+              [ "Signika" ]
+              [
+                "signika-extended.woff2"
+                "signika.woff2"
+              ]
+              [
+                500
+                700
+              ]
+            ])
+            ++ (crossLists (name: file: weight: { inherit name file weight; }) [
+              [ "Heebo" ]
+              [
+                "heebo-extended.woff2"
+                "heebo.woff2"
+              ]
+              [
+                400
+                600
+              ]
+            ])
+          )
       )
-      ++
-      (crossLists (name: file: weight: { inherit name file weight; })
-        [ [ "Heebo" ] [ "heebo-extended.woff2" "heebo.woff2" ] [ 400 600 ] ]
-      )
-    )
-  ));
+    );
 
   # TODO: get directly from https://github.com/google/fonts
   #       and compress with https://github.com/fonttools/fonttools

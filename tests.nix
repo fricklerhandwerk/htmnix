@@ -4,14 +4,35 @@ let
   inherit (import ./. { }) lib;
 in
 {
-  test-relativePath = with lib;
+  test-relativePath =
+    with lib;
     let
       testData = [
-        { from = "bar"; to = "baz"; expected = "./baz"; }
-        { from = "foo/bar"; to = "foo/baz"; expected = "./baz"; }
-        { from = "foo"; to = "bar/baz"; expected = "./bar/baz"; }
-        { from = "foo/bar"; to = "baz"; expected = "./../baz"; }
-        { from = "foo/bar/baz"; to = "foo"; expected = "./../../foo"; }
+        {
+          from = "bar";
+          to = "baz";
+          expected = "./baz";
+        }
+        {
+          from = "foo/bar";
+          to = "foo/baz";
+          expected = "./baz";
+        }
+        {
+          from = "foo";
+          to = "bar/baz";
+          expected = "./bar/baz";
+        }
+        {
+          from = "foo/bar";
+          to = "baz";
+          expected = "./../baz";
+        }
+        {
+          from = "foo/bar/baz";
+          to = "foo";
+          expected = "./../../foo";
+        }
       ];
     in
     {

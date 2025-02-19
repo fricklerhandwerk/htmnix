@@ -1,14 +1,16 @@
-{ sources ? import ../npins
-, system ? builtins.currentSystem
-, pkgs ? import sources.nixpkgs {
+{
+  sources ? import ../npins,
+  system ? builtins.currentSystem,
+  pkgs ? import sources.nixpkgs {
     inherit system;
     config = { };
     overlays = [ ];
-  }
-, lib ? import "${sources.nixpkgs}/lib"
+  },
+  lib ? import "${sources.nixpkgs}/lib",
 }:
 let
-  lib' = final: prev:
+  lib' =
+    final: prev:
     let
       new = import ./lib.nix { lib = final; };
     in
@@ -37,15 +39,21 @@ rec {
     let
       run-tests = pkgs.writeShellApplication {
         name = "run-tests";
-        text = with pkgs; with lib; ''
-          ${getExe nix-unit} ${toString ./tests.nix} "$@"
-        '';
+        text =
+          with pkgs;
+          with lib;
+          ''
+            ${getExe nix-unit} ${toString ./tests.nix} "$@"
+          '';
       };
       test-loop = pkgs.writeShellApplication {
         name = "test-loop";
-        text = with pkgs; with lib; ''
-          ${getExe watchexec} -w ${toString ./.} -- ${getExe nix-unit} ${toString ./tests.nix}
-        '';
+        text =
+          with pkgs;
+          with lib;
+          ''
+            ${getExe watchexec} -w ${toString ./.} -- ${getExe nix-unit} ${toString ./tests.nix}
+          '';
       };
       devmode = pkgs.devmode.override {
         buildArgs = "${toString ./.} -A build --show-trace";
@@ -62,7 +70,9 @@ rec {
     };
 
   inherit sources pkgs;
-  tests = with pkgs; with lib;
+  tests =
+    with pkgs;
+    with lib;
     let
       source = fileset.toSource {
         root = ../.;

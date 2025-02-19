@@ -17,36 +17,38 @@ in
 
   config.files = with lib; cfg.templates.files (attrValues config.pages);
 
-  config.content-types.page = { name, config, ... }: {
-    imports = [ cfg.content-types.document ];
-    options = {
-      title = mkOption {
-        description = "Page title";
-        type = types.str;
-        default = name;
+  config.content-types.page =
+    { name, config, ... }:
+    {
+      imports = [ cfg.content-types.document ];
+      options = {
+        title = mkOption {
+          description = "Page title";
+          type = types.str;
+          default = name;
+        };
+        description = mkOption {
+          description = ''
+            One-sentence description of page contents
+          '';
+          type = types.str;
+        };
+        summary = mkOption {
+          description = ''
+            One-paragraph summary of page contents
+          '';
+          type = types.str;
+        };
+        body = mkOption {
+          description = ''
+            Page contents in CommonMark
+          '';
+          type = types.str;
+        };
       };
-      description = mkOption {
-        description = ''
-          One-sentence description of page contents
-        '';
-        type = types.str;
-      };
-      summary = mkOption {
-        description = ''
-          One-paragraph summary of page contents
-        '';
-        type = types.str;
-      };
-      body = mkOption {
-        description = ''
-          Page contents in CommonMark
-        '';
-        type = types.str;
-      };
-    };
 
-    config.outputs.html = cfg.templates.html.page config;
-  };
+      config.outputs.html = cfg.templates.html.page config;
+    };
 
   config.templates.html.page = lib.template cfg.templates.html.dom (page: {
     html = {
