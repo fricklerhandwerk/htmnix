@@ -34,7 +34,7 @@ in
       flatten =
         attrs:
         mapAttrsToList (
-          name: value:
+          _name: value:
           # HACK: we somehow have to distinguish a module value from regular attributes.
           #       arbitrary choice: the outputs attribute
           if value ? outputs then value else mapAttrsToList value

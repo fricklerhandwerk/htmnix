@@ -50,7 +50,7 @@ in
       config.summary = lib.mkDefault config.description;
       config.outputs.html = lib.mkForce (
         (cfg.templates.html.page config).override (
-          final: prev: {
+          _final: prev: {
             html.body.content =
               with lib;
               map (

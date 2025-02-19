@@ -1,16 +1,10 @@
 {
   config,
-  options,
   lib,
   pkgs,
   ...
 }:
-let
-  inherit (lib)
-    mkOption
-    types
-    ;
-in
+
 {
   config.templates.html = {
     dom =

@@ -2,7 +2,6 @@
   config,
   options,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -10,7 +9,6 @@ let
     mkOption
     types
     ;
-  cfg = config;
 in
 {
   imports = lib.nixFiles ./.;
@@ -74,7 +72,7 @@ in
             let
               path = relativePath (head config.locations) (head target.locations);
               links = mapAttrs (
-                type: output: path + optionalString (type != "") ".${type}"
+                type: _output: path + optionalString (type != "") ".${type}"
                 #                     ^^^^^^^^^^^^
                 #               convention for raw files
               ) target.outputs;

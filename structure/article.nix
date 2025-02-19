@@ -36,7 +36,7 @@ in
       config.name = with lib; mkDefault (slug config.title);
       config.outputs.html = lib.mkForce (
         (cfg.templates.html.page config).override (
-          final: prev: {
+          _final: prev: {
             html = {
               # TODO: make authors always a list
               head.meta.authors = if lib.isList config.author then config.author else [ config.author ];

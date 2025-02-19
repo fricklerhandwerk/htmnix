@@ -2,9 +2,9 @@
   config,
   options,
   lib,
-  pkgs,
   ...
 }:
+
 let
   inherit (lib)
     mkOption
@@ -12,6 +12,7 @@ let
     ;
   cfg = config;
 in
+
 {
   options.collections = mkOption {
     description = ''

@@ -6,8 +6,8 @@
   Similar work from the OCaml ecosystem: https://github.com/ocsigen/tyxml
 */
 { config, lib, ... }:
+
 let
-  cfg = config;
   inherit (lib) mkOption types;
   inherit (types) submodule;
 
@@ -45,7 +45,7 @@ let
     };
 
   # options with types for all the defined DOM elements
-  element-types = lib.mapAttrs (name: value: mkOption { type = submodule value; }) elements;
+  element-types = lib.mapAttrs (_name: value: mkOption { type = submodule value; }) elements;
 
   # attrset of categories, where values are module options with the type of the
   # elements that belong to these categories
@@ -69,7 +69,7 @@ let
       )
     );
 
-  global-attrs = lib.mapAttrs (name: value: mkOption value) {
+  global-attrs = lib.mapAttrs (_name: value: mkOption value) {
     class = {
       type = with types; listOf nonEmptyStr;
       default = [ ];
@@ -105,7 +105,7 @@ let
 
   # all possible attributes to `<link>` elements.
   # since not all of them apply to each `rel=` type, the separate implementations can pick from this collection
-  link-attrs = lib.mapAttrs (name: value: mkOption value) {
+  link-attrs = lib.mapAttrs (_name: value: mkOption value) {
     href = {
       # TODO: implement https://html.spec.whatwg.org/multipage/semantics.html#the-link-element:attr-link-href-3
       # TODO: https://url.spec.whatwg.org/#valid-url-string
@@ -130,7 +130,7 @@ let
 
   # TODO: not sure where to put these, since so far they apply to multiple elements,
   #       but have the same properties for all of them
-  attrs = lib.mapAttrs (name: value: mkOption value) {
+  attrs = lib.mapAttrs (_name: value: mkOption value) {
     # TODO: investigate: `href` may be coupled with other attributes such as `target` or `hreflang`, this could simplify things
     href = {
       # TODO: https://url.spec.whatwg.org/#valid-url-string
@@ -415,7 +415,7 @@ let
       };
 
     base =
-      { name, ... }:
+      { ... }:
       {
         imports = [ element ];
         # TODO: "A base element must have either an href attribute, a target attribute, or both."
@@ -427,7 +427,7 @@ let
       };
 
     link =
-      { name, ... }:
+      { ... }:
       {
         imports = [ element ];
         options = global-attrs // {
@@ -472,7 +472,7 @@ let
     # <link rel="stylesheet"> is implemented separately because it can be used both in `<head>` and `<body>`
     # semantically it's a standalone thing but syntactically happens to be subsumed under `<link>`
     stylesheet =
-      { config, name, ... }:
+      { config, ... }:
       {
         imports = [ element ];
         options = global-attrs // {
@@ -808,7 +808,7 @@ let
                     with lib;
                     removeAttrs
                       (filterAttrs (
-                        name: value:
+                        _name: value:
                         !any (
                           c:
                           elem c [

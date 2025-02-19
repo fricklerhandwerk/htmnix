@@ -20,7 +20,7 @@ rec {
         in
         result'
         // {
-          override = new: (template g (x': base') x).override new;
+          override = new: (template g (_: base') x).override new;
         };
     };
 
