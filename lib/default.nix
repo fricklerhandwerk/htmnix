@@ -18,11 +18,20 @@ in
     };
     documents = mkOption {
       description = "A Document represents any web page loaded in the browser and serves as an entry point into the web page's content.";
-      type = with types; attrsOf (submodule ({ name, ... }: {
-        imports = [ wrap.document ];
+      type =
+        with types;
+        attrsOf (
+          submodule (
+            { name, ... }:
+            {
+              imports = [ wrap.document ];
 
-        outPath = mkIf (config.hostDir != null) "${config.hostDir}${(lib.lists.head config.documents.${name}.redirects)}";
-      }));
+              outPath =
+                mkIf (config.hostDir != null)
+                  "${config.hostDir}${(lib.lists.head config.documents.${name}.redirects)}";
+            }
+          )
+        );
     };
   };
 }

@@ -7,7 +7,8 @@ in
   testSimple = {
     expr =
       let
-        input = { ... }:
+        input =
+          { ... }:
           {
             documents.myDocument.html.head.title = "hello world";
           };
@@ -28,7 +29,8 @@ in
   testDefaultTitle = {
     expr =
       let
-        input = { ... }:
+        input =
+          { ... }:
           {
             documents.myDocument = { };
           };
@@ -49,7 +51,8 @@ in
   testSustomTitle = {
     expr =
       let
-        input = { ... }:
+        input =
+          { ... }:
           {
             documents.myDocument.title = "foo";
           };
@@ -70,12 +73,23 @@ in
   testTwoDocuments = {
     expr =
       let
-        input = { config, ... }:
+        input =
+          { config, ... }:
           {
             documents.first = { };
             documents.second.html.head.links = [
-              { attrs = { href = "test"; rel = "stylesheet"; }; }
-              { attrs = { href = config.documents.first; rel = "canonical"; }; }
+              {
+                attrs = {
+                  href = "test";
+                  rel = "stylesheet";
+                };
+              }
+              {
+                attrs = {
+                  href = config.documents.first;
+                  rel = "canonical";
+                };
+              }
             ];
           };
         site = htmnix [ input ];
@@ -97,11 +111,17 @@ in
   testRedirectTitle = {
     expr =
       let
-        input = { config, ... }:
+        input =
+          { config, ... }:
           {
             documents.first.redirects = [ "/redirect.html" ];
             documents.second.html.head.links = [
-              { attrs = { href = config.documents.first; rel = "canonical"; }; }
+              {
+                attrs = {
+                  href = config.documents.first;
+                  rel = "canonical";
+                };
+              }
             ];
           };
         site = htmnix [ input ];
@@ -122,12 +142,18 @@ in
   testHostDir = {
     expr =
       let
-        input = { config, ... }:
+        input =
+          { config, ... }:
           {
             hostDir = "/foo/bar";
             documents.first = { };
             documents.second.html.head.links = [
-              { attrs = { href = config.documents.first; rel = "canonical"; }; }
+              {
+                attrs = {
+                  href = config.documents.first;
+                  rel = "canonical";
+                };
+              }
             ];
           };
         site = htmnix [ input ];
@@ -148,7 +174,8 @@ in
   testBody = {
     expr =
       let
-        input = { ... }:
+        input =
+          { ... }:
           {
             documents.myDocument.html.body.children = with tags; [
               "hello"

@@ -4,20 +4,24 @@ let
   dom = import ./dom.nix { inherit lib; };
 in
 rec {
-  document = { name, config, ... }: {
-    imports = [ dom.document ];
-    options.title = lib.mkOption {
-      description = "Title of the document to set in `html.head.title`. Defaults to the document's attribute name if not specified.";
-      type = with lib.types; nullOr str;
-      default = "${name}";
-    };
-    config.html.head.title = lib.mkOptionDefault config.title;
+  document =
+    { name, config, ... }:
+    {
+      imports = [ dom.document ];
+      options.title = lib.mkOption {
+        description = "Title of the document to set in `html.head.title`. Defaults to the document's attribute name if not specified.";
+        type = with lib.types; nullOr str;
+        default = "${name}";
+      };
+      config.html.head.title = lib.mkOptionDefault config.title;
 
-    options.redirects = with lib; mkOption {
-      description = "Historical locations of this document. Prepend new locations to this list.";
-      type = with lib.types; listOf path;
-      default = [ "/${name}.html" ];
+      options.redirects =
+        with lib;
+        mkOption {
+          description = "Historical locations of this document. Prepend new locations to this list.";
+          type = with lib.types; listOf path;
+          default = [ "/${name}.html" ];
+        };
+      config.outPath = lib.mkDefault (lib.lists.head config.redirects);
     };
-    config.outPath = lib.mkDefault (lib.lists.head config.redirects);
-  };
 }

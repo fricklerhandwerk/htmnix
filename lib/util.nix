@@ -10,7 +10,8 @@ let
     tail
     ;
 
-  replaceStringsRec = from: to: string:
+  replaceStringsRec =
+    from: to: string:
     # recursively replace occurrences of `from` with `to` within `string`
     # example:
     #     replaceStringRec "--" "-" "hello-----world"
@@ -25,19 +26,25 @@ rec {
 
   splitLines = with lib; s: filter (x: !isList x) (split "\n" s);
 
-  indent = prefix: s:
+  indent =
+    prefix: s:
     let
       lines = splitLines s;
     in
-    concatStringsSep "\n" ([ (head lines) ] ++ (map (x: if x == "" then x else "${prefix}${x}") (tail lines)));
+    concatStringsSep "\n" (
+      [ (head lines) ] ++ (map (x: if x == "" then x else "${prefix}${x}") (tail lines))
+    );
 
-  stringCoercible = with lib; mkOptionType {
-    name = "path";
-    descriptionClass = "noun";
-    check = strings.isStringLike;
-    merge = options.mergeEqualOption;
-  };
+  stringCoercible =
+    with lib;
+    mkOptionType {
+      name = "path";
+      descriptionClass = "noun";
+      check = strings.isStringLike;
+      merge = options.mergeEqualOption;
+    };
 
-  toAttrs = attrs: concatStringsSep " "
-    (lib.attrsets.mapAttrsToList (attr: value: ''${attr}="${value}"'') attrs);
+  toAttrs =
+    attrs:
+    concatStringsSep " " (lib.attrsets.mapAttrsToList (attr: value: ''${attr}="${value}"'') attrs);
 }
