@@ -1,5 +1,6 @@
 { lib }:
 rec {
+  # TODO: document with examples. this is essentially `makeOverridable` but slightly fancier.
   template =
     g: f: x:
     let

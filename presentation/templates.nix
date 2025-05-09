@@ -36,9 +36,11 @@
             '';
       in
       builtins.readFile commonmark;
+
     nav =
       { menu, page }:
       let
+        # TODO: this is simply printing a tree with a certain template, make that explicit
         render-item =
           item:
           if item ? menu then

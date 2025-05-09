@@ -5,10 +5,7 @@
   ...
 }:
 {
-  config.assets."style.css".path = ./style.css;
-  config.assets."ngi-fediversity.svg".path = ./ngi-fediversity.svg;
-  # TODO: auto-generate a bunch from SVG
-  config.assets."favicon.png".path = ./favicon.png;
+  # TODO: move all the site-specific assets to examples and tests
   config.assets."fonts.css".path =
     with lib;
     builtins.toFile "fonts.css" (

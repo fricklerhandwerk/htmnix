@@ -358,15 +358,9 @@ let
 
             ${
               # https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-http-equiv-x-ua-compatible
+              # TODO: make proper icon and preload types
               ""
             }<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <!--
-            TODO: make proper icon and preload types
-            -->
-            <link rel="icon" type="image/png" href="/favicon.png">
-            <link rel="preload" as="image" type="image/svg" href="/ngi-fediversity.svg">
-            <link rel="preload" as="style" type="text/css" href="/style.css">
-
             ${print-element' "meta" {
               name = "viewport";
               content = "${join ", " (

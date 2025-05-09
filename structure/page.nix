@@ -56,27 +56,8 @@ in
         title.text = page.title;
         meta.description = page.description;
         link.canonical = lib.head page.locations;
-        link.stylesheets = [
-          # TODO: allow enabling preload with a flag
-          { href = "${page.link cfg.assets."style.css"}"; }
-          { href = "${page.link cfg.assets."fonts.css"}"; }
-        ];
       };
       body.content = [
-        ''
-          <header>
-            <input type="checkbox" id="menu-toggle" hidden>
-            <label for="menu-toggle" hidden>
-              <svg class="menu-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 20 20">
-               <path d="M0 4 H20 M0 10 H20 M0 16 H20" stroke="currentColor" stroke-width="2"/>
-              </svg>
-              <svg class="menu-close" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 20 20">
-                <path d="M2 2L18 18M18 2L2 18" stroke="currentColor" stroke-width="2"/>
-              </svg>
-            </label>
-            ${lib.indent "  " (cfg.menus.main.outputs.html page)}
-          </header>
-        ''
         {
           section = {
             attrs = { };
