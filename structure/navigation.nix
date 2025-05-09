@@ -28,6 +28,7 @@ in
       Collection navigation menus
     '';
     type = with types; attrsOf (submodule config.content-types.navigation);
+    default = { };
   };
 
   config.content-types.named-link =

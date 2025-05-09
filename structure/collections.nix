@@ -88,6 +88,7 @@ in
           }
         )
       );
+    default = { };
   };
 
   config.files =
