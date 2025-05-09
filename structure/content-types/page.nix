@@ -15,8 +15,6 @@ in
     type = with types; attrsOf (submodule config.content-types.page);
   };
 
-  config.files = with lib; cfg.templates.files (attrValues config.pages);
-
   config.content-types.page =
     { name, config, ... }:
     {
@@ -70,4 +68,6 @@ in
       ];
     };
   });
+
+  config.files = with lib; cfg.templates.files (attrValues config.pages);
 }

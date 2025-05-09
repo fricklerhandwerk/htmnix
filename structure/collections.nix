@@ -16,7 +16,7 @@ in
 {
   options.collections = mkOption {
     description = ''
-      Named collections of unnamed pages
+      Named collections of unnamed documents
 
       Define the content type of a new collection `example` to be `article`:
 

@@ -42,7 +42,7 @@ rec {
         ];
       };
     in
-    result.config.build;
+    result.config.out;
 
   shell =
     let

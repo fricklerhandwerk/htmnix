@@ -9,24 +9,23 @@ in
 {
   options.assets = mkOption {
     description = ''
-      Collection of assets, i.e. static files that can be linked to from within documents
+      Collection of assets: files that can be linked to from within documents
     '';
-    type =
-      with types;
-      attrsOf (
-        submodule (
-          { config, ... }:
-          {
-            imports = [ cfg.content-types.document ];
-            options.path = mkOption {
-              type = types.path;
-            };
-            config.outputs."" = if lib.isStorePath config.path then config.path else "${config.path}";
-          }
-        )
-      );
-    default = { };
+    type = with types; attrsOf (submodule (config.content-types.asset));
   };
+
+  config.content-types.asset =
+    { ... }:
+    {
+      imports = [ cfg.content-types.document ];
+
+      options.path = mkOption {
+        description = "File system path to the asset";
+        type = types.path;
+      };
+      # XXX: the "" output type means raw files
+      config.outputs."" = if lib.isStorePath config.path then config.path else "${config.path}";
+    };
 
   config.files =
     with lib;
@@ -36,7 +35,8 @@ in
         mapAttrsToList (
           _name: value:
           # HACK: we somehow have to distinguish a module value from regular attributes.
-          #       arbitrary choice: the outputs attribute
+          #       (almost) arbitrary choice, since we always deal with documents:
+          #       the `outputs` attribute
           if value ? outputs then value else mapAttrsToList value
         ) attrs;
     in

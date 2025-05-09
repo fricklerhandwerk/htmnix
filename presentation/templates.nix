@@ -73,6 +73,7 @@
         acc
         //
           (mapAttrs' (
+            # XXX: the "" output type means raw files
             type: value: {
               name = head elem.locations + optionalString (type != "") ".${type}";
               value =
