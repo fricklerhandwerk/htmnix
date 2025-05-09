@@ -13,7 +13,8 @@ Because we always wanted type-safe, correct-by-construction HTML and relative li
 Also because the Nix language intrudes oneself upon us as a templating engine, and is not that bad at it.
 A semblance of dependent types, too.
 
-Check [`test.nix`](./test.nix) for examples of what one can do with `htmnix`.
+Check [`tests.nix`](./tests.nix) for what one can do with `htmnix`.
+Run `nix-shell --run devmode` and try tinkering with the [example](./example/default.nix).
 
 ## How do we drive this to its bitter conclusion?
 

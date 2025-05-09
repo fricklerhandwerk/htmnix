@@ -65,7 +65,7 @@ rec {
           '';
       };
       devmode = pkgs.devmode.override {
-        buildArgs = "${toString ./.} -A build --show-trace";
+        buildArgs = "${toString ./example} --show-trace";
         open = "/index.html";
       };
     in
