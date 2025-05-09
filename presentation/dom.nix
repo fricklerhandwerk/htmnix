@@ -249,8 +249,7 @@ let
           self:
           print-element name self.attrs ''
             ${self.head}
-            ${self.body}
-          '';
+            ${self.body}'';
       };
 
     head =
@@ -276,51 +275,62 @@ let
             ];
             default = "utf-8";
           };
+
+          meta.x-ua-compat = mkOption {
+            # https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-http-equiv-x-ua-compatible
+            type = types.bool;
+            default = true;
+          };
           # https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag#viewport_width_and_screen_width
           # this should not exist and no one should ever have to think about it
           meta.viewport = mkOption {
-            type = submodule (
-              { ... }:
-              {
-                # TODO: figure out how to render only non-default values
-                options = {
-                  width = mkOption {
-                    type = with types; either (ints.between 1 10000) (enum [ "device-width" ]);
-                    default = "device-width"; # not default by standard
-                  };
-                  height = mkOption {
-                    type = with types; either (ints.between 1 10000) (enum [ "device-height" ]);
-                    default = "device-height"; # not default by standard (but seems to work if you don't set it)
-                  };
-                  initial-scale = mkOption {
-                    type = types.numbers.between 0.1 10;
-                    default = 1;
-                  };
-                  minimum-scale = mkOption {
-                    type = types.numbers.between 0.1 10;
-                    # TODO: render only as many digits as needed
-                    default = 0.1;
-                  };
-                  maximum-scale = mkOption {
-                    type = types.numbers.between 0.1 10;
-                    default = 10;
-                  };
-                  user-scalable = mkOption {
-                    type = types.bool;
-                    default = true;
-                  };
-                  interactive-widget = mkOption {
-                    type = types.enum [
-                      "resizes-visual"
-                      "resizes-content"
-                      "overlays-content"
-                    ];
-                    default = "resizes-visual";
-                  };
-                };
-              }
-            );
-            default = { };
+            type =
+              with types;
+              nullOr (
+                submodule (
+                  { ... }:
+                  {
+                    # TODO: figure out how to render only non-default values
+                    options = {
+                      width = mkOption {
+                        type = with types; either (ints.between 1 10000) (enum [ "device-width" ]);
+                        default = "device-width"; # not default by standard
+                      };
+                      height = mkOption {
+                        type = with types; either (ints.between 1 10000) (enum [ "device-height" ]);
+                        default = "device-height"; # not default by standard (but seems to work if you don't set it)
+                      };
+                      initial-scale = mkOption {
+                        type = types.numbers.between 0.1 10;
+                        default = 1;
+                      };
+                      minimum-scale = mkOption {
+                        type = types.numbers.between 0.1 10;
+                        # TODO: render only as many digits as needed
+                        default = 0.1;
+                      };
+                      maximum-scale = mkOption {
+                        type = types.numbers.between 0.1 10;
+                        default = 10;
+                      };
+                      user-scalable = mkOption {
+                        type = types.bool;
+                        default = true;
+                      };
+                      interactive-widget = mkOption {
+                        type = types.enum [
+                          "resizes-visual"
+                          "resizes-content"
+                          "overlays-content"
+                        ];
+                        default = "resizes-visual";
+                      };
+                    };
+                  }
+                )
+              );
+            default = null;
+            example = { };
           };
 
           meta.authors = mkOption {
@@ -352,21 +362,23 @@ let
           self:
           with lib;
           print-element name self.attrs ''
+            <meta charset="${self.meta.charset}" />
+            ${optionalString self.meta.x-ua-compat ''<meta http-equiv="X-UA-Compatible" content="IE=edge" />''}
             ${self.title}
             ${with lib; optionalString (!isNull self.base) self.base}
-            <meta charset="${self.meta.charset}" />
 
             ${
-              # https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-http-equiv-x-ua-compatible
               # TODO: make proper icon and preload types
               ""
-            }<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            ${print-element' "meta" {
-              name = "viewport";
-              content = "${join ", " (
-                mapAttrsToList (name: value: "${name}=${toString value}") self.meta.viewport
-              )}";
-            }}
+            }
+            ${optionalString (!isNull self.meta.viewport) (
+              print-element' "meta" {
+                name = "viewport";
+                content = "${join ", " (
+                  mapAttrsToList (name: value: "${name}=${toString value}") self.meta.viewport
+                )}";
+              }
+            )}
 
             ${join "\n" (
               map (
@@ -848,6 +860,5 @@ in
   config.categories = [ ];
   config.__toString = self: ''
     <!DOCTYPE HTML >
-    ${self.html}
-  '';
+    ${self.html}'';
 }
