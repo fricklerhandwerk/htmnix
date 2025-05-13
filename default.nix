@@ -52,7 +52,7 @@ rec {
           with pkgs;
           with lib;
           ''
-            ${getExe nix-unit} ${toString ./tests.nix} "$@"
+            exec ${getExe nix-unit} ${toString ./tests.nix} "$@"
           '';
       };
       test-loop = pkgs.writeShellApplication {
@@ -61,7 +61,7 @@ rec {
           with pkgs;
           with lib;
           ''
-            ${getExe watchexec} -w ${toString ./.} -- ${getExe nix-unit} ${toString ./tests.nix}
+            exec ${getExe watchexec} -w ${toString ./.} -- ${getExe nix-unit} ${toString ./tests.nix} "$@"
           '';
       };
       devmode = pkgs.devmode.override {
