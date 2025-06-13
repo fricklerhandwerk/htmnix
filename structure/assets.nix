@@ -15,7 +15,7 @@ in
   };
 
   config.content-types.asset =
-    { ... }:
+    { config, ... }:
     {
       imports = [ cfg.content-types.document ];
 
