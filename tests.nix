@@ -138,6 +138,74 @@ in
       </html>
     '';
   };
+  test-definition-lists = {
+    expr =
+      let
+        input =
+          { ... }:
+          {
+            html.head.title.text = "Definition lists are best lists";
+            html.head.meta.x-ua-compat = false;
+            html.body.content = [
+              {
+                dl.content = [
+                  {
+                    terms = [ { dt = "Definition"; } ];
+                    descriptions = [ { dd = "A boundary of meaning"; } ];
+                  }
+                  {
+                    terms = [
+                      { dt = "Meaning"; }
+                      { dt = "Sense"; }
+                    ];
+                    descriptions = [
+                      { dd = "Perception"; }
+                      { dd = "Thought"; }
+                      { dd = "Complaint"; }
+                    ];
+                  }
+                ];
+              }
+            ];
+          };
+        site = html input;
+      in
+      toString site;
+    expected = ''
+      <!DOCTYPE HTML >
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Definition lists are best lists</title>
+        </head>
+        <body>
+          <dl>
+            <dt>
+              Definition
+            </dt>
+            <dd>
+              A boundary of meaning
+            </dd>
+            <dt>
+              Meaning
+            </dt>
+            <dt>
+              Sense
+            </dt>
+            <dd>
+              Perception
+            </dd>
+            <dd>
+              Thought
+            </dd>
+            <dd>
+              Complaint
+            </dd>
+          </dl>
+        </body>
+      </html>
+    '';
+  };
   test-relativePath =
     with lib;
     let
