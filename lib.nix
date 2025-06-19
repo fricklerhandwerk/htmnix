@@ -1,30 +1,5 @@
 { lib }:
 rec {
-  # TODO: document with examples. this is essentially `makeOverridable` but slightly fancier.
-  template =
-    g: f: x:
-    let
-      base = f x;
-      result = g base;
-    in
-    result
-    // {
-      override =
-        new:
-        let
-          base' =
-            if lib.isFunction new then
-              lib.recursiveUpdate base (new base' base)
-            else
-              lib.recursiveUpdate base new;
-          result' = g base';
-        in
-        result'
-        // {
-          override = new: (template g (_: base') x).override new;
-        };
-    };
-
   /**
     Recursively replace occurrences of `from` with `to` within `string`
 
@@ -143,6 +118,14 @@ rec {
     toList (difference (fileFilter ({ hasExt, ... }: hasExt "nix") dir) (dir + "/default.nix"));
 
   types = rec {
+    stringCoercible =
+      with lib;
+      mkOptionType {
+        name = "path";
+        descriptionClass = "noun";
+        check = strings.isStringLike;
+        merge = options.mergeEqualOption;
+      };
     # arbitrarily nested attribute set where the leaves are of type `type`
     # NOTE: this works for anything but attribute sets!
     recursiveAttrs =

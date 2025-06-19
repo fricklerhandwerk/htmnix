@@ -1,14 +1,11 @@
+let
+  sources = import ./npins;
+in
 {
-  sources ? import ./npins,
-  system ? builtins.currentSystem,
-  pkgs ? import sources.nixpkgs {
-    inherit system;
-    config = { };
-    overlays = [ ];
-  },
-  lib ? import "${sources.nixpkgs}/lib",
+  nixpkgs ? sources.nixpkgs,
 }:
 let
+  lib = import "${sources.nixpkgs}/lib";
   lib' =
     final: prev:
     let
@@ -16,95 +13,44 @@ let
     in
     new // { types = prev.recursiveUpdate prev.types new.types; };
   lib'' = lib.extend lib';
-
 in
-rec {
-  # re-export inputs so they can be overridden granularly
-  # (they can't be accessed from the outside any other way)
-  inherit sources pkgs;
-
+{
   lib = lib'';
-
-  # pass a suitable module as `content`
-  build =
-    content:
+  nixpkgs =
+    {
+      system ? builtins.currentSystem,
+      config ? { },
+      overlays ? [ ],
+    }@nixpkgs-config:
     let
-      result = lib.evalModules {
-        modules = [
-          content
-          ./structure
-          ./presentation
-          {
-            _module.args = {
-              inherit pkgs;
-            };
-          }
-        ];
-      };
-    in
-    result.config.out;
-
-  shell =
-    let
-      run-tests = pkgs.writeShellApplication {
-        name = "run-tests";
-        text =
-          with pkgs;
-          with lib;
-          ''
-            exec ${getExe nix-unit} ${toString ./tests.nix} "$@"
-          '';
+      pkgs = import nixpkgs ({ inherit system config overlays; } // nixpkgs-config);
+      tests = pkgs.writeShellApplication {
+        name = "tests";
+        runtimeInputs = with pkgs; [ nix-unit ];
+        text = ''
+          exec nix-unit ${toString ./tests.nix} "$@"
+        '';
       };
       test-loop = pkgs.writeShellApplication {
         name = "test-loop";
-        text =
-          with pkgs;
-          with lib;
-          ''
-            exec ${getExe watchexec} -w ${toString ./.} -- ${getExe nix-unit} ${toString ./tests.nix} "$@"
-          '';
-      };
-      devmode = pkgs.devmode.override {
-        buildArgs = "${toString ./example} --show-trace";
-        open = "/index.html";
-      };
-    in
-    pkgs.mkShellNoCC {
-      packages = [
-        pkgs.npins
-        run-tests
-        test-loop
-        devmode
-      ];
-    };
-
-  tests =
-    with pkgs;
-    with lib;
-    let
-      source = fileset.toSource {
-        root = ../.;
-        fileset = fileset.unions [
-          ./default.nix
-          ./tests.nix
-          ./lib.nix
-          ../npins
+        runtimeInputs = [
+          pkgs.watchexec
+          tests
         ];
+        text = ''
+          exec watchexec -w ${toString ./.} -- tests "$@"
+        '';
       };
     in
-    runCommand "run-tests"
-      {
-        buildInputs = [ pkgs.nix ];
-      }
-      ''
-        export HOME="$(realpath .)"
-        # HACK: nix-unit initialises its own entire Nix, so it needs a store to operate on,
-        # but since we're in a derivation, we can't fetch sources, so copy Nixpkgs manually here.
-        # `''${sources.nixpkgs}` resolves to `<hash>-source`,
-        # adding it verbatim will result in <hash'>-<hash>-source, so rename it first
-        cp -r ${sources.nixpkgs} source
-        nix-store --add --store "$HOME" source
-        ${getExe nix-unit} --gc-roots-dir "$HOME" --store "$HOME" ${source}/website/tests.nix "$@"
-        touch $out
-      '';
+    {
+      # re-export inputs so they can be overridden granularly
+      # (they can't be accessed from the outside any other way)
+      inherit sources pkgs;
+      shell = pkgs.mkShellNoCC {
+        packages = lib.attrValues {
+          inherit (pkgs) npins;
+          inherit tests test-loop;
+        };
+      };
+    };
 }

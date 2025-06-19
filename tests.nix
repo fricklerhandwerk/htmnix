@@ -10,7 +10,7 @@ let
         class = "DOM";
         modules = [
           document
-          (import ./presentation/dom.nix)
+          (import ./dom.nix)
         ];
       };
     in

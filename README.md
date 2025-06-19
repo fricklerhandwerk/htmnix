@@ -14,9 +14,10 @@ Also because the Nix language intrudes oneself upon us as a templating engine, a
 A semblance of dependent types, too.
 
 Check [`tests.nix`](./tests.nix) for what one can do with `htmnix`.
-Run `nix-shell --run devmode` and try tinkering with the [example](./example/default.nix).
 
 ## How do we drive this to its bitter conclusion?
+
+Help appreciated!
 
 1. [Install Nix](nix.dev/install-nix)
 1. Clone this repository:
@@ -25,76 +26,25 @@ Run `nix-shell --run devmode` and try tinkering with the [example](./example/def
    git clone git@github.com:fricklerhandwerk/htmnix
    ```
 
-1. Set up [direnv](https://github.com/nix-community/nix-direnv#installation)
-
-1. Enable direnv for this repository:
+1. Run the tests in a loop:
 
    ```console
-   cd htmnix
-   direnv allow
+   nix-shell --run test-loop
    ```
-
-   > **Note**
-   >
-   > This is a security boundary, and allows automatically running code from this repository on your machine.
 
 1. Edit any of the files, see [repository layout](#repository-layout) for guidance
 
-1. Run the tests:
-
-   ```console
-   run-tests
-   ```
-
-1. Add more [HTML data structures](https://html.spec.whatwg.org/multipage) to [`//structure`](./structure) and test that they work.
-
-  > **Tip**
-  >
-  > Run tests in a loop:
-  >
-  > ```console
-  > test-loop
-  > ```
-
-## But how to do anything useful with it?
-
-After smashing together old and new code, currently all bets are off in that regard.
-But if you feel brave, in order to build a web site, follow this handwavy outline:
-
-- Start a new Nix project.
-
-  You know how to do this, right?
-
-- Somehow get the `devmode` package from this library into your project.
-
-  Probably copy the definition.
-  Or open a pull request to expose it in `default.nix` and update this instruction.
-
-- Add a `//content` directory and somehow point this library to it.
-
-  Actually library needs to be slighly reworked for this to be possible, pull requests welcome.
-  There are probably some hard design decisions to make it not too painful to work with.
-
-- Start a live preview in a different terminal:
-
-  ```bash
-  devmode
-  ```
-
-  This will open your default web browser and automatically reload the page when the source changes.
+1. Add more [HTML data structures](https://html.spec.whatwg.org/multipage) to [`dom.nix`](./dom.nix) and more tests to verify that they work.
 
 # Repository layout
 
-- [structure](./structure)
+- [dom.nix](./dom.nix)
 
-  Definitions of content data structures, such as pages, articles, menus, collections, etc.
+  The document object model implemented in the module system.
 
-- [presentation](./presentation)
+- [tests.nix](./tests.nix)
 
-  Code specific to how the web site is rendered.
-  In particular, it encodes the mechanism for distributing content to files, and for putting together files for the final result.
-
-  In principle, different output formats (such as RSS feeds) are possible, and would be implemented there.
+  Unit tests for exercising the implementation.
 
 - [default.nix](./default.nix)
 
@@ -117,6 +67,3 @@ But if you feel brave, in order to build a web site, follow this handwavy outlin
 - [README.md](./README.md)
 
   This file.
-
-But look, half of it is broken anyway due to a sloppy migration and needs cleanup and proper testing, just ain't nobody got time for that.
-Help appreciated.
