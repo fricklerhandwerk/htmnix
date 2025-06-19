@@ -14,25 +14,18 @@ let
         ];
       };
     in
-    {
-      __toString = _: toString eval.config;
-      value = eval.config;
-    };
+    toString eval.config;
 in
 {
-  test-minimal-dom = {
-    expr =
-      let
-        input =
-          { ... }:
-          {
-            html.head.title.text = "hello world";
-            html.head.meta.x-ua-compat = false;
-            html.body = { };
-          };
-        site = html input;
-      in
-      toString site;
+  test-minimal-dom = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "hello world";
+        html.head.meta.x-ua-compat = false;
+        html.body = { };
+      };
+    expr = html input;
     expected = ''
       <!DOCTYPE HTML >
       <html>
@@ -45,18 +38,14 @@ in
       </html>
     '';
   };
-  test-x-ua-compat-default = {
-    expr =
-      let
-        input =
-          { ... }:
-          {
-            html.head.title.text = "hello world";
-            html.body = { };
-          };
-        site = html input;
-      in
-      toString site;
+  test-x-ua-compat-default = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "hello world";
+        html.body = { };
+      };
+    expr = html input;
     expected = ''
       <!DOCTYPE HTML >
       <html>
@@ -70,50 +59,46 @@ in
       </html>
     '';
   };
-  test-auto-section = {
-    expr =
-      let
-        input =
-          { ... }:
-          {
-            html.head.title.text = "Character strings considered harmful";
-            html.head.meta.x-ua-compat = false;
-            html.body = {
-              content = [
-                {
-                  section = {
-                    heading.content = "Why we still use byte soup";
-                    content = [
-                      {
-                        p.content = "Dependent types exist but we pretend they don't";
-                      }
-                      {
-                        section = {
-                          heading.content = "Breaking news";
-                          content = [
-                            {
-                              p.content = "The module system is very verbose";
-                            }
-                          ];
-                        };
-                      }
-                    ];
-                  };
-                }
-                {
-                  section = {
-                    heading.content = "The DOM strikes back";
-                    content = [
-                      { p.content = "Standards bring fear"; }
-                    ];
-                  };
-                }
-              ];
-            };
-          };
-        site = html input;
-      in
-      toString site;
+  test-auto-section = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Character strings considered harmful";
+        html.head.meta.x-ua-compat = false;
+        html.body = {
+          content = [
+            {
+              section = {
+                heading.content = "Why we still use byte soup";
+                content = [
+                  {
+                    p.content = "Dependent types exist but we pretend they don't";
+                  }
+                  {
+                    section = {
+                      heading.content = "Breaking news";
+                      content = [
+                        {
+                          p.content = "The module system is very verbose";
+                        }
+                      ];
+                    };
+                  }
+                ];
+              };
+            }
+            {
+              section = {
+                heading.content = "The DOM strikes back";
+                content = [
+                  { p.content = "Standards bring fear"; }
+                ];
+              };
+            }
+          ];
+        };
+      };
+    expr = html input;
     expected = ''
       <!DOCTYPE HTML >
       <html>
@@ -138,39 +123,35 @@ in
       </html>
     '';
   };
-  test-definition-lists = {
-    expr =
-      let
-        input =
-          { ... }:
+  test-definition-lists = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Definition lists are best lists";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
           {
-            html.head.title.text = "Definition lists are best lists";
-            html.head.meta.x-ua-compat = false;
-            html.body.content = [
+            dl.content = [
               {
-                dl.content = [
-                  {
-                    terms = [ { dt = "Definition"; } ];
-                    descriptions = [ { dd = "A boundary of meaning"; } ];
-                  }
-                  {
-                    terms = [
-                      { dt = "Meaning"; }
-                      { dt = "Sense"; }
-                    ];
-                    descriptions = [
-                      { dd = "Perception"; }
-                      { dd = "Thought"; }
-                      { dd = "Complaint"; }
-                    ];
-                  }
+                terms = [ { dt = "Definition"; } ];
+                descriptions = [ { dd = "A boundary of meaning"; } ];
+              }
+              {
+                terms = [
+                  { dt = "Meaning"; }
+                  { dt = "Sense"; }
+                ];
+                descriptions = [
+                  { dd = "Perception"; }
+                  { dd = "Thought"; }
+                  { dd = "Complaint"; }
                 ];
               }
             ];
-          };
-        site = html input;
-      in
-      toString site;
+          }
+        ];
+      };
+    expr = html input;
     expected = ''
       <!DOCTYPE HTML >
       <html>
