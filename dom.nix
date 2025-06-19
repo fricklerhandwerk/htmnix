@@ -689,7 +689,9 @@ let
             with lib;
             let
               n = toString config.heading-level;
-              heading = ''<h${n}${print-attrs self.heading.attrs}>${self.heading.content}</h${n}>'';
+              heading = ''
+                <h${n}${print-attrs self.heading.attrs}>${self.heading.content}</h${n}>
+              '';
               hgroup =
                 with lib;
                 print-element "hgroup" self.heading.hgroup.attrs (squash ''

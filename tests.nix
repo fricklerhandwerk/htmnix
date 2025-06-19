@@ -70,6 +70,74 @@ in
       </html>
     '';
   };
+  test-auto-section = {
+    expr =
+      let
+        input =
+          { ... }:
+          {
+            html.head.title.text = "Character strings considered harmful";
+            html.head.meta.x-ua-compat = false;
+            html.body = {
+              content = [
+                {
+                  section = {
+                    heading.content = "Why we still use byte soup";
+                    content = [
+                      {
+                        p.content = "Dependent types exist but we pretend they don't";
+                      }
+                      {
+                        section = {
+                          heading.content = "Breaking news";
+                          content = [
+                            {
+                              p.content = "The module system is very verbose";
+                            }
+                          ];
+                        };
+                      }
+                    ];
+                  };
+                }
+                {
+                  section = {
+                    heading.content = "The DOM strikes back";
+                    content = [
+                      { p.content = "Standards bring fear"; }
+                    ];
+                  };
+                }
+              ];
+            };
+          };
+        site = html input;
+      in
+      toString site;
+    expected = ''
+      <!DOCTYPE HTML >
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Character strings considered harmful</title>
+        </head>
+        <body>
+          <h1>Why we still use byte soup</h1>
+          <p>
+            Dependent types exist but we pretend they don't
+          </p>
+          <h2>Breaking news</h2>
+          <p>
+            The module system is very verbose
+          </p>
+          <h1>The DOM strikes back</h1>
+          <p>
+            Standards bring fear
+          </p>
+        </body>
+      </html>
+    '';
+  };
   test-relativePath =
     with lib;
     let
