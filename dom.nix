@@ -208,6 +208,7 @@ let
       </${name}>
     '');
 
+  # https://html.spec.whatwg.org/multipage/syntax.html#start-tags
   print-element' = name: attrs: "<${name}${print-attrs attrs}>";
 
   toString-unwrap =
@@ -364,8 +365,8 @@ let
           self:
           with lib;
           print-element name self.attrs ''
-            <meta charset="${self.meta.charset}" />
-            ${optionalString self.meta.x-ua-compat ''<meta http-equiv="X-UA-Compatible" content="IE=edge" />''}
+            <meta charset="${self.meta.charset}">
+            ${optionalString self.meta.x-ua-compat ''<meta http-equiv="X-UA-Compatible" content="IE=edge">''}
             ${self.title}
             ${with lib; optionalString (!isNull self.base) self.base}
             ${optionalString (!isNull self.meta.description) (

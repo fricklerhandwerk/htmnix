@@ -30,7 +30,7 @@ in
       <!DOCTYPE HTML >
       <html>
         <head>
-          <meta charset="utf-8" />
+          <meta charset="utf-8">
           <title>hello world</title>
         </head>
         <body>
@@ -50,8 +50,8 @@ in
       <!DOCTYPE HTML >
       <html>
         <head>
-          <meta charset="utf-8" />
-          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+          <meta charset="utf-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
           <title>hello world</title>
         </head>
         <body>
@@ -103,7 +103,7 @@ in
       <!DOCTYPE HTML >
       <html>
         <head>
-          <meta charset="utf-8" />
+          <meta charset="utf-8">
           <title>Character strings considered harmful</title>
         </head>
         <body>
@@ -156,7 +156,7 @@ in
       <!DOCTYPE HTML >
       <html>
         <head>
-          <meta charset="utf-8" />
+          <meta charset="utf-8">
           <title>Definition lists are best lists</title>
         </head>
         <body>
@@ -206,7 +206,7 @@ in
       <!DOCTYPE HTML >
       <html>
         <head>
-          <meta charset="utf-8" />
+          <meta charset="utf-8">
           <title>Anchors aweigh</title>
         </head>
         <body>
@@ -233,7 +233,7 @@ in
       <!DOCTYPE HTML >
       <html>
         <head>
-          <meta charset="utf-8" />
+          <meta charset="utf-8">
           <title>A described page</title>
           <meta content="A short description" name="description">
         </head>
@@ -256,7 +256,7 @@ in
       <!DOCTYPE HTML >
       <html>
         <head>
-          <meta charset="utf-8" />
+          <meta charset="utf-8">
           <title>A canonical page</title>
           <link href="https://example.com/page" rel="canonical">
         </head>
