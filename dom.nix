@@ -128,6 +128,27 @@ let
     #       https://html.spec.whatwg.org/multipage/semantics.html#the-link-element:concept-element-attributes
   };
 
+  # https://html.spec.whatwg.org/multipage/document-sequences.html#valid-navigable-target-name-or-keyword
+  valid-navigable-target =
+    let
+      is-valid-target =
+        s:
+        let
+          inherit (lib) match;
+          has-lt = s: match ".*<.*" s != null;
+          has-tab-or-newline = s: match ".*[\t\n].*" s != null;
+          has-valid-start = s: match "^[^_].*$" s != null;
+        in
+        has-valid-start s && !(has-lt s && has-tab-or-newline s);
+    in
+    with types;
+    either (enum [
+      "_blank"
+      "_self"
+      "_parent"
+      "_top"
+    ]) (types.addCheck str is-valid-target);
+
   # TODO: not sure where to put these, since so far they apply to multiple elements,
   #       but have the same properties for all of them
   attrs = lib.mapAttrs (_name: value: mkOption value) {
@@ -138,26 +159,7 @@ let
       type = types.str;
     };
     target = {
-      # https://html.spec.whatwg.org/multipage/document-sequences.html#valid-navigable-target-name-or-keyword
-      type =
-        let
-          is-valid-target =
-            s:
-            let
-              inherit (lib) match;
-              has-lt = s: match ".*<.*" s != null;
-              has-tab-or-newline = s: match ".*[\t\n].*" s != null;
-              has-valid-start = s: match "^[^_].*$" s != null;
-            in
-            has-valid-start s && !(has-lt s && has-tab-or-newline s);
-        in
-        with types;
-        either (enum [
-          "_blank"
-          "_self"
-          "_parent"
-          "_top"
-        ]) (types.addCheck str is-valid-target);
+      type = valid-navigable-target;
     };
   };
 
@@ -721,7 +723,86 @@ let
           "flow"
           "palpable"
         ];
-        config.__toString = self: print-element name self.attrs (toString self.content);
+        config.__toString =
+          self:
+          with lib;
+          print-element name self.attrs (
+            if isString self.content then self.content else join "\n" (map toString-unwrap self.content)
+          );
+      };
+
+    a =
+      { name, ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs {
+            href = mkOption {
+              # https://html.spec.whatwg.org/multipage/links.html#attr-hyperlink-href
+              type = with types; nullOr str;
+              default = null;
+            };
+            target = mkOption {
+              type = with types; nullOr valid-navigable-target;
+              default = null;
+            };
+            rel = mkOption {
+              # https://html.spec.whatwg.org/multipage/links.html#attr-hyperlink-rel
+              type =
+                with types;
+                listOfUnique (enum [
+                  "alternate"
+                  "author"
+                  "bookmark"
+                  "external"
+                  "help"
+                  "license"
+                  "next"
+                  "nofollow"
+                  "noopener"
+                  "noreferrer"
+                  "opener"
+                  "prev"
+                  "privacy-policy"
+                  "search"
+                  "tag"
+                  "terms-of-service"
+                ]);
+              default = [ ];
+            };
+            hreflang = mkOption {
+              # https://www.rfc-editor.org/rfc/rfc5646.html
+              type = with types; nullOr str;
+              default = null;
+            };
+            type = mkOption {
+              # https://html.spec.whatwg.org/multipage/text-level-semantics.html#attr-hyperlink-type
+              # TODO: https://mimesniff.spec.whatwg.org/#mime-type-writing
+              type = with types; nullOr str;
+              default = null;
+            };
+          };
+          content = mkOption {
+            # https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-a-element:concept-element-content-model
+            # TODO: the spec allows flow content when <a> is in flow context.
+            #       the containing element's content model could be injected as a module argument,
+            #       similarly to how section depth is threaded through body content,
+            #       so that <a> can select flow or phrasing content accordingly.
+            # TODO: interactive content (including nested <a>) must be excluded.
+            type = with types; either str (listOf (attrTag categories.phrasing));
+          };
+        };
+        config.categories = [
+          "flow"
+          "phrasing"
+          "palpable"
+        ];
+        config.__toString =
+          self:
+          with lib;
+          print-element name self.attrs (
+            if isString self.content then self.content else join "\n" (map toString-unwrap self.content)
+          );
       };
 
     dl =

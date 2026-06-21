@@ -187,6 +187,38 @@ in
       </html>
     '';
   };
+  test-anchor = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Anchors aweigh";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            p.content = [
+              { a = { attrs.href = "https://example.com"; content = "click here"; }; }
+            ];
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML >
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Anchors aweigh</title>
+        </head>
+        <body>
+          <p>
+            <a href="https://example.com">
+              click here
+            </a>
+          </p>
+        </body>
+      </html>
+    '';
+  };
   test-relativePath =
     with lib;
     let
