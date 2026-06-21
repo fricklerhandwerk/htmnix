@@ -368,6 +368,18 @@ let
             ${optionalString self.meta.x-ua-compat ''<meta http-equiv="X-UA-Compatible" content="IE=edge" />''}
             ${self.title}
             ${with lib; optionalString (!isNull self.base) self.base}
+            ${optionalString (!isNull self.meta.description) (
+              print-element' "meta" {
+                name = "description";
+                content = self.meta.description;
+              }
+            )}
+            ${optionalString (!isNull self.link.canonical) (
+              print-element' "link" {
+                rel = "canonical";
+                href = self.link.canonical;
+              }
+            )}
 
             ${
               # TODO: make proper icon and preload types

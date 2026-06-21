@@ -219,6 +219,52 @@ in
       </html>
     '';
   };
+  test-meta-description = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "A described page";
+        html.head.meta.x-ua-compat = false;
+        html.head.meta.description = "A short description";
+        html.body = { };
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML >
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>A described page</title>
+          <meta content="A short description" name="description">
+        </head>
+        <body>
+        </body>
+      </html>
+    '';
+  };
+  test-link-canonical = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "A canonical page";
+        html.head.meta.x-ua-compat = false;
+        html.head.link.canonical = "https://example.com/page";
+        html.body = { };
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML >
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>A canonical page</title>
+          <link href="https://example.com/page" rel="canonical">
+        </head>
+        <body>
+        </body>
+      </html>
+    '';
+  };
   test-relativePath =
     with lib;
     let
