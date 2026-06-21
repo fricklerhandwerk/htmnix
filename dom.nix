@@ -44,6 +44,24 @@ let
       };
     };
 
+  # https://html.spec.whatwg.org/multipage/syntax.html#void-elements
+  void-element =
+    { name, ... }:
+    {
+      imports = [ element ];
+      # https://html.spec.whatwg.org/multipage/syntax.html#start-tags
+      config.__toString =
+        self:
+        "<${name}${
+          print-attrs (
+            removeAttrs self [
+              "categories"
+              "__toString"
+            ]
+          )
+        }>";
+    };
+
   # options with types for all the defined DOM elements
   element-types = lib.mapAttrs (_name: value: mkOption { type = submodule value; }) elements;
 
@@ -208,7 +226,6 @@ let
       </${name}>
     '');
 
-  # https://html.spec.whatwg.org/multipage/syntax.html#start-tags
   print-element' = name: attrs: "<${name}${print-attrs attrs}>";
 
   toString-unwrap =
@@ -438,19 +455,18 @@ let
     base =
       { ... }:
       {
-        imports = [ element ];
+        imports = [ void-element ];
         # TODO: "A base element must have either an href attribute, a target attribute, or both."
         options = global-attrs // {
           inherit (attrs) href target;
         };
         config.categories = [ "metadata" ];
-        config.__toString = self: "<base${print-attrs self}>";
       };
 
     link =
       { ... }:
       {
-        imports = [ element ];
+        imports = [ void-element ];
         options = global-attrs // {
           # TODO: more attributes
           # https://html.spec.whatwg.org/multipage/semantics.html#the-link-element:concept-element-attributes
@@ -487,7 +503,6 @@ let
         # TODO: figure out how to make body-ok `link` elements
         # https://html.spec.whatwg.org/multipage/semantics.html#allowed-in-the-body
         config.categories = [ "metadata" ];
-        config.__toString = self: "<link${print-attrs self}>";
       };
 
     # <link rel="stylesheet"> is implemented separately because it can be used both in `<head>` and `<body>`

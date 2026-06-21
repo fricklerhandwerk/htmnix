@@ -265,6 +265,32 @@ in
       </html>
     '';
   };
+  test-base = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Base element";
+        html.head.meta.x-ua-compat = false;
+        html.head.base = {
+          href = "https://example.com";
+          target = "_self";
+        };
+        html.body = { };
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML >
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Base element</title>
+          <base href="https://example.com" target="_self">
+        </head>
+        <body>
+        </body>
+      </html>
+    '';
+  };
   test-relativePath =
     with lib;
     let
