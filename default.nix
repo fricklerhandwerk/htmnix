@@ -24,6 +24,7 @@ in
       system ? builtins.currentSystem,
       config ? { },
       overlays ? [ ],
+      ...
     }@nixpkgs-config:
     let
       pkgs = import nixpkgs ({ inherit system config overlays; } // nixpkgs-config);
