@@ -51,10 +51,11 @@ in
       # (they can't be accessed from the outside any other way)
       inherit sources pkgs;
       shell = pkgs.mkShellNoCC {
-        packages = lib.attrValues {
-          inherit (pkgs) npins;
-          inherit tests test-loop;
-        };
+        packages = [
+          pkgs.npins
+          tests
+          test-loop
+        ];
       };
     };
 }
