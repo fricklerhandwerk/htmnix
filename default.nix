@@ -7,15 +7,18 @@ in
 let
   lib = import "${sources.nixpkgs}/lib";
   lib' =
-    final: prev:
     let
-      new = import ./lib.nix { lib = final; };
+      overlay =
+        final: prev:
+        let
+          new = import ./lib.nix { lib = final; };
+        in
+        new // { types = prev.recursiveUpdate prev.types new.types; };
     in
-    new // { types = prev.recursiveUpdate prev.types new.types; };
-  lib'' = lib.extend lib';
+    lib.extend overlay;
 in
 {
-  lib = lib'';
+  lib = lib';
   nixpkgs =
     {
       system ? builtins.currentSystem,
