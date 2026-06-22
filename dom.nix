@@ -381,12 +381,11 @@ let
                     config.categories = [ "metadata" ];
                     config.__toString =
                       self:
-                      print-attrs (
-                        removeAttrs self [
-                          "categories"
-                          "__toString"
-                        ]
-                      );
+                      print-element' "link" {
+                        rel = "canonical";
+                        inherit (self) href;
+                        inherit (self) id class title;
+                      };
                   }
                 )
               );
@@ -417,12 +416,7 @@ let
                 content = self.meta.description;
               }
             )}
-            ${optionalString (!isNull self.link.canonical) (
-              print-element' "link" {
-                rel = "canonical";
-                inherit (self.link.canonical) href;
-              }
-            )}
+            ${optionalString (!isNull self.link.canonical) self.link.canonical}
 
             ${
               # TODO: make proper icon and preload types
@@ -447,20 +441,7 @@ let
               ) self.meta.authors
             )}
 
-            ${join "\n" (
-              map (
-                stylesheet:
-                print-element' "link" (
-                  {
-                    rel = "stylesheet";
-                  }
-                  // (removeAttrs stylesheet [
-                    "categories"
-                    "__toString"
-                  ])
-                )
-              ) self.link.stylesheets
-            )}
+            ${join "\n" (map toString self.link.stylesheets)}
           '';
       };
 
@@ -565,11 +546,14 @@ let
         ];
         config.__toString =
           self:
-          print-attrs (
-            removeAttrs self [
+          print-element' "link" (
+            {
+              rel = "stylesheet";
+            }
+            // (removeAttrs self [
               "categories"
               "__toString"
-            ]
+            ])
           );
       };
 
