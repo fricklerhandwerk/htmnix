@@ -142,8 +142,12 @@ let
       type = with types; nullOr str;
       default = null;
     };
-    # TODO: more attributes
-    #       https://html.spec.whatwg.org/multipage/semantics.html#the-link-element:concept-element-attributes
+    # TODO: hreflang https://www.rfc-editor.org/rfc/rfc5646.html
+    # TODO: crossorigin https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attribute
+    #       enum [ "anonymous" "use-credentials" ]
+    # TODO: referrerpolicy https://w3c.github.io/webappsec-referrer-policy/#referrer-policy
+    #       enum [ "" "no-referrer" "no-referrer-when-downgrade" "origin" "origin-when-cross-origin" "same-origin" "strict-origin" "strict-origin-when-cross-origin" "unsafe-url" ]
+    # TODO: type (MIME type) https://mimesniff.spec.whatwg.org/#mime-type-writing
   };
 
   # https://html.spec.whatwg.org/multipage/document-sequences.html#valid-navigable-target-name-or-keyword
@@ -363,7 +367,7 @@ let
           };
           link.canonical = mkOption {
             # https://html.spec.whatwg.org/multipage/links.html#link-type-canonical
-            # TODO: this one has more internal structure, e.g. with hreflang
+            # TODO: once added to link-attrs, also inherit hreflang, crossorigin, referrerpolicy, type
             type =
               with types;
               nullOr (
