@@ -51,7 +51,7 @@ in
       <html>
         <head>
           <meta charset="utf-8">
-          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <meta content="IE=edge" http-equiv="X-UA-Compatible">
           <title>hello world</title>
         </head>
         <body>

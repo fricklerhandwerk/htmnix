@@ -406,8 +406,13 @@ let
           self:
           with lib;
           print-element name self.attrs ''
-            <meta charset="${self.meta.charset}">
-            ${optionalString self.meta.x-ua-compat ''<meta http-equiv="X-UA-Compatible" content="IE=edge">''}
+            ${print-element' "meta" { charset = self.meta.charset; }}
+            ${optionalString self.meta.x-ua-compat (
+              print-element' "meta" {
+                http-equiv = "X-UA-Compatible";
+                content = "IE=edge";
+              }
+            )}
             ${self.title}
             ${with lib; optionalString (!isNull self.base) self.base}
             ${optionalString (!isNull self.meta.description) (
