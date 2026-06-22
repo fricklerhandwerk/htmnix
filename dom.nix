@@ -361,10 +361,31 @@ let
             type = with types; nullOr str;
             default = null;
           };
-          # TODO: this one has more internal structure, e.g with hreflang
-          # TODO: print in output
           link.canonical = mkOption {
-            type = with types; nullOr str;
+            # https://html.spec.whatwg.org/multipage/links.html#link-type-canonical
+            # TODO: this one has more internal structure, e.g. with hreflang
+            type =
+              with types;
+              nullOr (
+                submodule (
+                  { ... }:
+                  {
+                    imports = [ element ];
+                    options = global-attrs // {
+                      inherit (link-attrs) href;
+                    };
+                    config.categories = [ "metadata" ];
+                    config.__toString =
+                      self:
+                      print-attrs (
+                        removeAttrs self [
+                          "categories"
+                          "__toString"
+                        ]
+                      );
+                  }
+                )
+              );
             default = null;
           };
           link.stylesheets = mkOption {
@@ -395,7 +416,7 @@ let
             ${optionalString (!isNull self.link.canonical) (
               print-element' "link" {
                 rel = "canonical";
-                href = self.link.canonical;
+                inherit (self.link.canonical) href;
               }
             )}
 

@@ -248,7 +248,7 @@ in
       {
         html.head.title.text = "A canonical page";
         html.head.meta.x-ua-compat = false;
-        html.head.link.canonical = "https://example.com/page";
+        html.head.link.canonical = { href = "https://example.com/page"; };
         html.body = { };
       };
     expr = html input;
