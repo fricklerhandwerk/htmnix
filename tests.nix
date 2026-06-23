@@ -402,4 +402,44 @@ in
       </html>
     '';
   };
+  test-dt-element-content = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "dt element content";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            dl.content = [
+              {
+                terms = [ { dt = { p.content = "a term"; }; } ];
+                descriptions = [ { dd = "a description"; } ];
+              }
+            ];
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML >
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>dt element content</title>
+        </head>
+        <body>
+          <dl>
+            <dt>
+              <p>
+                a term
+              </p>
+            </dt>
+            <dd>
+              a description
+            </dd>
+          </dl>
+        </body>
+      </html>
+    '';
+  };
 }

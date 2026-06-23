@@ -923,6 +923,7 @@ let
           print-element name self.attrs (join "\n" content);
       };
 
+    # https://html.spec.whatwg.org/multipage/grouping-content.html#the-dt-element
     dt =
       { config, ... }:
       {
@@ -933,32 +934,23 @@ let
             type =
               with types;
               either str (
-                submodule (
-                  attrTag (
-                    # TODO: test
-                    with lib;
-                    removeAttrs
-                      (filterAttrs (
-                        _name: value:
-                        !any (
-                          c:
-                          elem c [
-                            "sectioning"
-                            "heading"
-                          ]
-                        ) value.categories
-                      ) categories.flow)
-                      [
-                        "header"
-                        "footer"
-                      ]
+                attrTag (
+                  with lib;
+                  # https://html.spec.whatwg.org/multipage/grouping-content.html#the-dt-element:concept-element-content-model
+                  removeAttrs categories.flow (
+                    attrNames categories.sectioning
+                    ++ attrNames categories.heading
+                    ++ [
+                      "header"
+                      "footer"
+                    ]
                   )
                 )
               );
           };
         };
         config.categories = [ ];
-        config.__toString = self: print-element "dt" self.attrs self.dt;
+        config.__toString = self: with lib; print-element "dt" self.attrs (toString-unwrap self.dt);
       };
 
     dd =
