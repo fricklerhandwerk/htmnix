@@ -1046,6 +1046,96 @@ let
             ${join "\n" (map toString-unwrap self.content)}
           '');
       };
+    # https://html.spec.whatwg.org/multipage/grouping-content.html#the-li-element
+    li =
+      { ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs {
+            # only meaningful in <ol> context; ignored by browsers otherwise
+            value = mkOption {
+              type = with types; nullOr int;
+              default = null;
+            };
+          };
+          content = mkOption {
+            type = with types; either str (listOf (either str (attrTag categories.flow)));
+          };
+        };
+        config.categories = [ ];
+        config.__toString =
+          self:
+          with lib;
+          print-element "li" self.attrs (
+            if isString self.content then self.content else join "\n" (map toString-unwrap self.content)
+          );
+      };
+
+    # https://html.spec.whatwg.org/multipage/grouping-content.html#the-ul-element
+    ul =
+      { name, ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs { };
+          content = mkOption {
+            type = with types; listOf (submodule li);
+            default = [ ];
+          };
+        };
+        config.categories = [
+          "flow"
+          "palpable"
+        ];
+        config.__toString =
+          self:
+          with lib;
+          print-element name self.attrs (join "\n" (map toString self.content));
+      };
+
+    # https://html.spec.whatwg.org/multipage/grouping-content.html#the-ol-element
+    ol =
+      { name, ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs {
+            reversed = mkOption {
+              type = types.bool;
+              default = false;
+            };
+            start = mkOption {
+              type = with types; nullOr int;
+              default = null;
+            };
+            type = mkOption {
+              type =
+                with types;
+                nullOr (enum [
+                  "1"
+                  "a"
+                  "A"
+                  "i"
+                  "I"
+                ]);
+              default = null;
+            };
+          };
+          content = mkOption {
+            type = with types; listOf (submodule li);
+            default = [ ];
+          };
+        };
+        config.categories = [
+          "flow"
+          "palpable"
+        ];
+        config.__toString =
+          self:
+          with lib;
+          print-element name self.attrs (join "\n" (map toString self.content));
+      };
   };
 in
 {

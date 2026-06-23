@@ -480,6 +480,124 @@ in
       </html>
     '';
   };
+  test-unordered-list = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Unordered list";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            ul.content = [
+              { content = "first"; }
+              { content = "second"; }
+              { content = "third"; }
+            ];
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Unordered list</title>
+        </head>
+        <body>
+          <ul>
+            <li>
+              first
+            </li>
+            <li>
+              second
+            </li>
+            <li>
+              third
+            </li>
+          </ul>
+        </body>
+      </html>
+    '';
+  };
+  test-ordered-list = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Ordered list";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            ol = {
+              attrs.start = 3;
+              attrs.type = "A";
+              content = [
+                { content = "first"; }
+                { content = "second"; }
+              ];
+            };
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Ordered list</title>
+        </head>
+        <body>
+          <ol start="3" type="A">
+            <li>
+              first
+            </li>
+            <li>
+              second
+            </li>
+          </ol>
+        </body>
+      </html>
+    '';
+  };
+  test-list-item-flow = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "List item with flow content";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            ul.content = [
+              {
+                content = [
+                  { p.content = "a paragraph"; }
+                ];
+              }
+            ];
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>List item with flow content</title>
+        </head>
+        <body>
+          <ul>
+            <li>
+              <p>
+                a paragraph
+              </p>
+            </li>
+          </ul>
+        </body>
+      </html>
+    '';
+  };
   test-code-phrasing = rec {
     input =
       { ... }:
