@@ -242,6 +242,9 @@ let
     else
       e;
 
+  print-content =
+    content: with lib; if isString content then content else join "\n" (map toString-unwrap content);
+
   elements = rec {
     document =
       { ... }:
@@ -649,8 +652,7 @@ let
         };
 
         config.categories = [ ];
-        config.__toString =
-          self: with lib; print-element name self.attrs (join "\n" (map toString-unwrap self.content));
+        config.__toString = self: print-element name self.attrs (print-content self.content);
       };
 
     section =
@@ -744,8 +746,7 @@ let
                   ${optionalString (!isNull self.heading.after) (toString-unwrap self.heading.after)}
                 '');
               content =
-                (if isNull self.heading.hgroup.attrs then heading else hgroup)
-                + join "\n" (map toString-unwrap self.content);
+                (if isNull self.heading.hgroup.attrs then heading else hgroup) + print-content self.content;
             in
             if !isNull self.attrs then print-element name self.attrs content else content;
         };
@@ -765,12 +766,7 @@ let
           "flow"
           "palpable"
         ];
-        config.__toString =
-          self:
-          with lib;
-          print-element name self.attrs (
-            if isString self.content then self.content else join "\n" (map toString-unwrap self.content)
-          );
+        config.__toString = self: print-element name self.attrs (print-content self.content);
       };
 
     a =
@@ -839,12 +835,7 @@ let
           "phrasing"
           "palpable"
         ];
-        config.__toString =
-          self:
-          with lib;
-          print-element name self.attrs (
-            if isString self.content then self.content else join "\n" (map toString-unwrap self.content)
-          );
+        config.__toString = self: print-element name self.attrs (print-content self.content);
       };
 
     code =
@@ -863,12 +854,7 @@ let
           "phrasing"
           "palpable"
         ];
-        config.__toString =
-          self:
-          with lib;
-          print-element name self.attrs (
-            if isString self.content then self.content else join "\n" (map toString-unwrap self.content)
-          );
+        config.__toString = self: print-element name self.attrs (print-content self.content);
       };
 
     dl =
@@ -1003,12 +989,7 @@ let
           };
         };
         config.categories = [ ];
-        config.__toString =
-          self:
-          with lib;
-          print-element name self.attrs (
-            if isString self.content then self.content else join "\n" (map toString-unwrap self.content)
-          );
+        config.__toString = self: print-element name self.attrs (print-content self.content);
       };
 
     # https://html.spec.whatwg.org/multipage/interactive-elements.html#the-details-element
@@ -1043,7 +1024,7 @@ let
           with lib;
           print-element name self.attrs (squash ''
             ${optionalString (!isNull self.summary) (toString self.summary)}
-            ${join "\n" (map toString-unwrap self.content)}
+            ${print-content self.content}
           '');
       };
     # https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-span-element
@@ -1062,12 +1043,7 @@ let
           "phrasing"
           "palpable"
         ];
-        config.__toString =
-          self:
-          with lib;
-          print-element name self.attrs (
-            if isString self.content then self.content else join "\n" (map toString-unwrap self.content)
-          );
+        config.__toString = self: print-element name self.attrs (print-content self.content);
       };
 
     # https://html.spec.whatwg.org/multipage/grouping-content.html#the-div-element
@@ -1086,10 +1062,7 @@ let
           "flow"
           "palpable"
         ];
-        config.__toString =
-          self:
-          with lib;
-          print-element name self.attrs (join "\n" (map toString-unwrap self.content));
+        config.__toString = self: print-element name self.attrs (print-content self.content);
       };
 
     # https://html.spec.whatwg.org/multipage/grouping-content.html#the-li-element
@@ -1110,12 +1083,7 @@ let
           };
         };
         config.categories = [ ];
-        config.__toString =
-          self:
-          with lib;
-          print-element "li" self.attrs (
-            if isString self.content then self.content else join "\n" (map toString-unwrap self.content)
-          );
+        config.__toString = self: print-element "li" self.attrs (print-content self.content);
       };
 
     # https://html.spec.whatwg.org/multipage/grouping-content.html#the-ul-element
@@ -1135,9 +1103,7 @@ let
           "palpable"
         ];
         config.__toString =
-          self:
-          with lib;
-          print-element name self.attrs (join "\n" (map toString self.content));
+          self: with lib; print-element name self.attrs (join "\n" (map toString self.content));
       };
 
     # https://html.spec.whatwg.org/multipage/grouping-content.html#the-ol-element
@@ -1178,9 +1144,7 @@ let
           "palpable"
         ];
         config.__toString =
-          self:
-          with lib;
-          print-element name self.attrs (join "\n" (map toString self.content));
+          self: with lib; print-element name self.attrs (join "\n" (map toString self.content));
       };
   };
 in
