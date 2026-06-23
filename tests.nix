@@ -412,7 +412,13 @@ in
           {
             dl.content = [
               {
-                terms = [ { dt = { p.content = "a term"; }; } ];
+                terms = [
+                  {
+                    dt = {
+                      p.content = "a term";
+                    };
+                  }
+                ];
                 descriptions = [ { dd = "a description"; } ];
               }
             ];
@@ -438,6 +444,81 @@ in
               a description
             </dd>
           </dl>
+        </body>
+      </html>
+    '';
+  };
+  test-code = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Code element";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            p.content = [
+              { code.content = "f: let x = f x; in x"; }
+            ];
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML >
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Code element</title>
+        </head>
+        <body>
+          <p>
+            <code>
+              f: let x = f x; in x
+            </code>
+          </p>
+        </body>
+      </html>
+    '';
+  };
+  test-code-phrasing = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Code with phrasing content";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            p.content = [
+              {
+                code.content = [
+                  {
+                    a = {
+                      attrs.href = "https://example.com";
+                      content = "example.com";
+                    };
+                  }
+                ];
+              }
+            ];
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML >
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Code with phrasing content</title>
+        </head>
+        <body>
+          <p>
+            <code>
+              <a href="https://example.com">
+                example.com
+              </a>
+            </code>
+          </p>
         </body>
       </html>
     '';

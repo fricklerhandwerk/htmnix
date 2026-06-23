@@ -847,6 +847,30 @@ let
           );
       };
 
+    code =
+      { name, ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs { };
+          # https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-code-element
+          content = mkOption {
+            type = with types; either str (listOf (attrTag categories.phrasing));
+          };
+        };
+        config.categories = [
+          "flow"
+          "phrasing"
+          "palpable"
+        ];
+        config.__toString =
+          self:
+          with lib;
+          print-element name self.attrs (
+            if isString self.content then self.content else join "\n" (map toString-unwrap self.content)
+          );
+      };
+
     dl =
       { config, name, ... }:
       {
