@@ -480,6 +480,38 @@ in
       </html>
     '';
   };
+  test-span = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "span element";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            p.content = [
+              { span.content = "highlighted text"; }
+            ];
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>span element</title>
+        </head>
+        <body>
+          <p>
+            <span>
+              highlighted text
+            </span>
+          </p>
+        </body>
+      </html>
+    '';
+  };
   test-code = rec {
     input =
       { ... }:
