@@ -196,7 +196,12 @@ in
         html.body.content = [
           {
             p.content = [
-              { a = { attrs.href = "https://example.com"; content = "click here"; }; }
+              {
+                a = {
+                  attrs.href = "https://example.com";
+                  content = "click here";
+                };
+              }
             ];
           }
         ];
@@ -248,7 +253,9 @@ in
       {
         html.head.title.text = "A canonical page";
         html.head.meta.x-ua-compat = false;
-        html.head.link.canonical = { href = "https://example.com/page"; };
+        html.head.link.canonical = {
+          href = "https://example.com/page";
+        };
         html.body = { };
       };
     expr = html input;
@@ -326,4 +333,73 @@ in
       expr = map (case: relativePath case.from case.to) testData;
       expected = map (case: case.expected) testData;
     };
+  test-details-open = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Details";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            details = {
+              attrs.open = true;
+              content = [ { p.content = "Where the devil lives"; } ];
+            };
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML >
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Details</title>
+        </head>
+        <body>
+          <details open>
+            <p>
+              Where the devil lives
+            </p>
+          </details>
+        </body>
+      </html>
+    '';
+  };
+  test-details-closed = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Details";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            details = {
+              summary.content = "Click to find out where the devil lives";
+              content = [ { p.content = "In the details"; } ];
+            };
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML >
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Details</title>
+        </head>
+        <body>
+          <details>
+            <summary>
+              Click to find out where the devil lives
+            </summary>
+            <p>
+              In the details
+            </p>
+          </details>
+        </body>
+      </html>
+    '';
+  };
 }

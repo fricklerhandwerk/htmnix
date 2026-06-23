@@ -974,6 +974,62 @@ let
         config.categories = [ ];
         config.__toString = self: print-element "dd" self.attrs self.dd;
       };
+
+    # https://html.spec.whatwg.org/multipage/interactive-elements.html#the-summary-element
+    summary =
+      { name, ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs { };
+          content = mkOption {
+            type = with types; either str (listOf (attrTag (categories.phrasing // categories.heading)));
+          };
+        };
+        config.categories = [ ];
+        config.__toString =
+          self:
+          with lib;
+          print-element name self.attrs (
+            if isString self.content then self.content else join "\n" (map toString-unwrap self.content)
+          );
+      };
+
+    # https://html.spec.whatwg.org/multipage/interactive-elements.html#the-details-element
+    details =
+      { name, ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs {
+            open = mkOption {
+              # https://html.spec.whatwg.org/multipage/interactive-elements.html#attr-details-open
+              type = types.bool;
+              default = false;
+            };
+          };
+          summary = mkOption {
+            type = with types; nullOr (submodule summary);
+            default = null;
+          };
+          content = mkOption {
+            type = with types; listOf (either str (attrTag categories.flow));
+            default = [ ];
+          };
+        };
+        config.categories = [
+          "flow"
+          "interactive"
+          "palpable"
+        ];
+        config.__toString =
+          self:
+          with lib;
+          print-element name self.attrs (squash ''
+            ${optionalString (!isNull self.summary) (toString self.summary)}
+            ${join "\n" (map toString-unwrap self.content)}
+          '');
+      };
   };
 in
 {
