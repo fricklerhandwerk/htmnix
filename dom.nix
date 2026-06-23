@@ -1046,6 +1046,28 @@ let
             ${join "\n" (map toString-unwrap self.content)}
           '');
       };
+    # https://html.spec.whatwg.org/multipage/grouping-content.html#the-div-element
+    div =
+      { name, ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs { };
+          content = mkOption {
+            type = with types; listOf (either str (attrTag categories.flow));
+            default = [ ];
+          };
+        };
+        config.categories = [
+          "flow"
+          "palpable"
+        ];
+        config.__toString =
+          self:
+          with lib;
+          print-element name self.attrs (join "\n" (map toString-unwrap self.content));
+      };
+
     # https://html.spec.whatwg.org/multipage/grouping-content.html#the-li-element
     li =
       { ... }:

@@ -448,6 +448,38 @@ in
       </html>
     '';
   };
+  test-div = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "div element";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            div.content = [
+              { p.content = "inside a div"; }
+            ];
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>div element</title>
+        </head>
+        <body>
+          <div>
+            <p>
+              inside a div
+            </p>
+          </div>
+        </body>
+      </html>
+    '';
+  };
   test-code = rec {
     input =
       { ... }:
