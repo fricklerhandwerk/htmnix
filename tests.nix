@@ -27,7 +27,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">
@@ -47,7 +47,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">
@@ -100,7 +100,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">
@@ -153,7 +153,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">
@@ -208,7 +208,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">
@@ -235,7 +235,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">
@@ -260,7 +260,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">
@@ -286,7 +286,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">
@@ -350,7 +350,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">
@@ -383,7 +383,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">
@@ -427,7 +427,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">
@@ -464,7 +464,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">
@@ -505,7 +505,7 @@ in
       };
     expr = html input;
     expected = ''
-      <!DOCTYPE HTML >
+      <!DOCTYPE HTML>
       <html>
         <head>
           <meta charset="utf-8">

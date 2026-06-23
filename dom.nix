@@ -1056,6 +1056,6 @@ in
 
   config.categories = [ ];
   config.__toString = self: ''
-    <!DOCTYPE HTML >
+    <!DOCTYPE HTML>
     ${self.html}'';
 }
