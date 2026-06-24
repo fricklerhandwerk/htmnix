@@ -662,6 +662,419 @@ in
       </html>
     '';
   };
+  test-table-minimal = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Simple table";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            table.body = [
+              {
+                rows = [
+                  { content = [ { td.content = "cell"; } ]; }
+                ];
+              }
+            ];
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Simple table</title>
+        </head>
+        <body>
+          <table>
+            <tr>
+              <td>
+                cell
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+    '';
+  };
+  test-table-thead-tbody = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Table with head";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            table = {
+              head.rows = [
+                {
+                  content = [
+                    { th.content = "Name"; }
+                    { th.content = "Value"; }
+                  ];
+                }
+              ];
+              body = [
+                {
+                  rows = [
+                    {
+                      content = [
+                        { td.content = "foo"; }
+                        { td.content = "42"; }
+                      ];
+                    }
+                  ];
+                }
+              ];
+            };
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Table with head</title>
+        </head>
+        <body>
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  Name
+                </th>
+                <th>
+                  Value
+                </th>
+              </tr>
+            </thead>
+            <tr>
+              <td>
+                foo
+              </td>
+              <td>
+                42
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+    '';
+  };
+  test-table-tbody-attrs = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "tbody with attrs";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            table.body = [
+              {
+                attrs = { };
+                rows = [
+                  { content = [ { td.content = "cell"; } ]; }
+                ];
+              }
+            ];
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>tbody with attrs</title>
+        </head>
+        <body>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  cell
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </body>
+      </html>
+    '';
+  };
+  test-table-caption = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Table with caption";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            table = {
+              caption.content = "My Table";
+              body = [
+                {
+                  rows = [
+                    { content = [ { td.content = "data"; } ]; }
+                  ];
+                }
+              ];
+            };
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Table with caption</title>
+        </head>
+        <body>
+          <table>
+            <caption>
+              My Table
+            </caption>
+            <tr>
+              <td>
+                data
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+    '';
+  };
+  test-table-tfoot = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Table with foot";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            table = {
+              body = [
+                {
+                  rows = [
+                    { content = [ { td.content = "data"; } ]; }
+                  ];
+                }
+              ];
+              foot.rows = [
+                { content = [ { td.content = "total"; } ]; }
+              ];
+            };
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Table with foot</title>
+        </head>
+        <body>
+          <table>
+            <tr>
+              <td>
+                data
+              </td>
+            </tr>
+            <tfoot>
+              <tr>
+                <td>
+                  total
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </body>
+      </html>
+    '';
+  };
+  test-table-cell-attrs = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Table cell attributes";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            table.body = [
+              {
+                rows = [
+                  {
+                    content = [
+                      { td = { attrs.colspan = 2; content = "wide"; }; }
+                    ];
+                  }
+                  {
+                    content = [
+                      { td.content = "a"; }
+                      { td = { attrs.rowspan = 2; content = "tall"; }; }
+                    ];
+                  }
+                ];
+              }
+            ];
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Table cell attributes</title>
+        </head>
+        <body>
+          <table>
+            <tr>
+              <td colspan="2">
+                wide
+              </td>
+            </tr>
+            <tr>
+              <td>
+                a
+              </td>
+              <td rowspan="2">
+                tall
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+    '';
+  };
+  test-table-colgroup = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Table with colgroup";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            table = {
+              colgroups = [
+                {
+                  content = [
+                    { }
+                    { span = 2; }
+                  ];
+                }
+              ];
+              body = [
+                {
+                  rows = [
+                    {
+                      content = [
+                        { td.content = "a"; }
+                        { td.content = "b"; }
+                        { td.content = "c"; }
+                      ];
+                    }
+                  ];
+                }
+              ];
+            };
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Table with colgroup</title>
+        </head>
+        <body>
+          <table>
+            <colgroup>
+              <col>
+              <col span="2">
+            </colgroup>
+            <tr>
+              <td>
+                a
+              </td>
+              <td>
+                b
+              </td>
+              <td>
+                c
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+    '';
+  };
+  test-table-th-scope = rec {
+    input =
+      { ... }:
+      {
+        html.head.title.text = "Table with scoped headers";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          {
+            table = {
+              head.rows = [
+                {
+                  content = [
+                    { th = { attrs.scope = "col"; content = "Name"; }; }
+                  ];
+                }
+              ];
+              body = [
+                {
+                  rows = [
+                    { content = [ { td.content = "Alice"; } ]; }
+                  ];
+                }
+              ];
+            };
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Table with scoped headers</title>
+        </head>
+        <body>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">
+                  Name
+                </th>
+              </tr>
+            </thead>
+            <tr>
+              <td>
+                Alice
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+    '';
+  };
   test-code-phrasing = rec {
     input =
       { ... }:

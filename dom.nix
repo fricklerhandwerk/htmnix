@@ -1146,6 +1146,300 @@ let
         config.__toString =
           self: with lib; print-element name self.attrs (join "\n" (map toString self.content));
       };
+
+    # https://html.spec.whatwg.org/multipage/tables.html#the-col-element
+    col =
+      { ... }:
+      {
+        imports = [ element ];
+        options = global-attrs // {
+          span = mkOption {
+            type = with types; nullOr (ints.between 1 1000);
+            default = null;
+          };
+        };
+        config.categories = [ ];
+        config.__toString =
+          self:
+          "<col${
+            print-attrs (
+              removeAttrs self [
+                "categories"
+                "__toString"
+              ]
+            )
+          }>";
+      };
+
+    # https://html.spec.whatwg.org/multipage/tables.html#the-colgroup-element
+    colgroup =
+      { ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs {
+            # https://html.spec.whatwg.org/multipage/tables.html#attr-colgroup-span
+            # TODO: mutually exclusive with content — when set, col children are not allowed
+            span = mkOption {
+              type = with types; nullOr (ints.between 1 1000);
+              default = null;
+            };
+          };
+          content = mkOption {
+            type = with types; listOf (submodule col);
+            default = [ ];
+          };
+        };
+        config.categories = [ ];
+        config.__toString =
+          self: with lib; print-element "colgroup" self.attrs (join "\n" (map toString self.content));
+      };
+
+    # https://html.spec.whatwg.org/multipage/tables.html#the-td-element
+    td =
+      { name, ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs {
+            colspan = mkOption {
+              type = with types; nullOr (ints.between 1 1000);
+              default = null;
+            };
+            rowspan = mkOption {
+              # 0 means span remaining rows in the row group
+              type = with types; nullOr (ints.between 0 65534);
+              default = null;
+            };
+            headers = mkOption {
+              # TODO: must be unique tokens, each an ID of a th in the same table, and not this element's own ID
+              type = with types; listOf nonEmptyStr;
+              default = [ ];
+            };
+          };
+          content = mkOption {
+            type = with types; either str (listOf (either str (attrTag categories.flow)));
+            default = [ ];
+          };
+        };
+        config.categories = [ ];
+        config.__toString = self: print-element name self.attrs (print-content self.content);
+      };
+
+    # https://html.spec.whatwg.org/multipage/tables.html#the-th-element
+    th =
+      { name, ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs {
+            colspan = mkOption {
+              type = with types; nullOr (ints.between 1 1000);
+              default = null;
+            };
+            rowspan = mkOption {
+              # 0 means span remaining rows in the row group
+              type = with types; nullOr (ints.between 0 65534);
+              default = null;
+            };
+            headers = mkOption {
+              # TODO: must be unique tokens, each an ID of a th in the same table, and not this element's own ID
+              type = with types; listOf nonEmptyStr;
+              default = [ ];
+            };
+            scope = mkOption {
+              # https://html.spec.whatwg.org/multipage/tables.html#attr-th-scope
+              # TODO: "rowgroup" only valid when th is in a row group; "colgroup" only valid when anchored in a column group
+              type =
+                with types;
+                nullOr (enum [
+                  "row"
+                  "col"
+                  "rowgroup"
+                  "colgroup"
+                ]);
+              default = null;
+            };
+            abbr = mkOption {
+              # https://html.spec.whatwg.org/multipage/tables.html#attr-th-abbr
+              type = with types; nullOr str;
+              default = null;
+            };
+          };
+          # https://html.spec.whatwg.org/multipage/tables.html#the-th-element:concept-element-content-model
+          content = mkOption {
+            type =
+              with types;
+              either str (
+                listOf (
+                  either str (
+                    attrTag (
+                      with lib;
+                      removeAttrs categories.flow (
+                        attrNames categories.sectioning
+                        ++ attrNames categories.heading
+                        ++ [
+                          "header"
+                          "footer"
+                        ]
+                      )
+                    )
+                  )
+                )
+              );
+            default = [ ];
+          };
+        };
+        config.categories = [ ];
+        config.__toString = self: print-element name self.attrs (print-content self.content);
+      };
+
+    # https://html.spec.whatwg.org/multipage/tables.html#the-tr-element
+    tr =
+      { ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs { };
+          content = mkOption {
+            type =
+              with types;
+              listOf (attrTag {
+                inherit (element-types) th td;
+              });
+            default = [ ];
+          };
+        };
+        config.categories = [ ];
+        config.__toString =
+          self: with lib; print-element "tr" self.attrs (join "\n" (map toString-unwrap self.content));
+      };
+
+    # https://html.spec.whatwg.org/multipage/tables.html#the-thead-element
+    thead =
+      { ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs { };
+          rows = mkOption {
+            type = with types; listOf (submodule tr);
+            default = [ ];
+          };
+        };
+        config.categories = [ ];
+        config.__toString =
+          self: with lib; print-element "thead" self.attrs (join "\n" (map toString self.rows));
+      };
+
+    # https://html.spec.whatwg.org/multipage/tables.html#the-tbody-element
+    tbody =
+      { ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkOption {
+            type =
+              with types;
+              nullOr (submodule {
+                options = global-attrs;
+              });
+            default = null;
+          };
+          rows = mkOption {
+            type = with types; listOf (submodule tr);
+            default = [ ];
+          };
+        };
+        config.categories = [ ];
+        config.__toString =
+          self:
+          with lib;
+          let
+            content = join "\n" (map toString self.rows);
+          in
+          if !isNull self.attrs then print-element "tbody" self.attrs content else content;
+      };
+
+    # https://html.spec.whatwg.org/multipage/tables.html#the-tfoot-element
+    tfoot =
+      { ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs { };
+          rows = mkOption {
+            type = with types; listOf (submodule tr);
+            default = [ ];
+          };
+        };
+        config.categories = [ ];
+        config.__toString =
+          self: with lib; print-element "tfoot" self.attrs (join "\n" (map toString self.rows));
+      };
+
+    # https://html.spec.whatwg.org/multipage/tables.html#the-caption-element
+    caption =
+      { ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs { };
+          # flow content, but no descendant table elements
+          # TODO: we can't enforce the "no descendant table" constraint statically
+          content = mkOption {
+            type = with types; either str (listOf (either str (attrTag categories.flow)));
+            default = [ ];
+          };
+        };
+        config.categories = [ ];
+        config.__toString = self: print-element "caption" self.attrs (print-content self.content);
+      };
+
+    # https://html.spec.whatwg.org/multipage/tables.html#the-table-element
+    table =
+      { name, ... }:
+      {
+        imports = [ element ];
+        options = {
+          attrs = mkAttrs { };
+          caption = mkOption {
+            type = with types; nullOr (submodule caption);
+            default = null;
+          };
+          colgroups = mkOption {
+            type = with types; listOf (submodule colgroup);
+            default = [ ];
+          };
+          head = mkOption {
+            type = with types; nullOr (submodule thead);
+            default = null;
+          };
+          body = mkOption {
+            type = with types; listOf (submodule tbody);
+            default = [ ];
+          };
+          foot = mkOption {
+            type = with types; nullOr (submodule tfoot);
+            default = null;
+          };
+        };
+        # TODO: the table model requires that colspan/rowspan values cover the grid completely without overlap or gaps
+        config.categories = [
+          "flow"
+          "palpable"
+        ];
+        config.__toString =
+          self:
+          with lib;
+          print-element name self.attrs (squash ''
+            ${optionalString (!isNull self.caption) (toString self.caption)}
+            ${join "\n" (map toString self.colgroups)}
+            ${optionalString (!isNull self.head) (toString self.head)}
+            ${join "\n" (map toString self.body)}
+            ${optionalString (!isNull self.foot) (toString self.foot)}
+          '');
+      };
   };
 in
 {
