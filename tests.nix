@@ -21,7 +21,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "hello world";
+        html.head.title.content = "hello world";
         html.head.meta.x-ua-compat = false;
         html.body = { };
       };
@@ -42,7 +42,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "hello world";
+        html.head.title.content = "hello world";
         html.body = { };
       };
     expr = html input;
@@ -63,7 +63,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Character strings considered harmful";
+        html.head.title.content = "Character strings considered harmful";
         html.head.meta.x-ua-compat = false;
         html.body = {
           content = [
@@ -127,24 +127,24 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Definition lists are best lists";
+        html.head.title.content = "Definition lists are best lists";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
             dl.content = [
               {
-                terms = [ { dt = "Definition"; } ];
-                descriptions = [ { dd = "A boundary of meaning"; } ];
+                terms = [ { content = "Definition"; } ];
+                descriptions = [ { content = "A boundary of meaning"; } ];
               }
               {
                 terms = [
-                  { dt = "Meaning"; }
-                  { dt = "Sense"; }
+                  { content = "Meaning"; }
+                  { content = "Sense"; }
                 ];
                 descriptions = [
-                  { dd = "Perception"; }
-                  { dd = "Thought"; }
-                  { dd = "Complaint"; }
+                  { content = "Perception"; }
+                  { content = "Thought"; }
+                  { content = "Complaint"; }
                 ];
               }
             ];
@@ -191,7 +191,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Anchors aweigh";
+        html.head.title.content = "Anchors aweigh";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -228,7 +228,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "A described page";
+        html.head.title.content = "A described page";
         html.head.meta.x-ua-compat = false;
         html.head.meta.description = "A short description";
         html.body = { };
@@ -251,7 +251,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "A canonical page";
+        html.head.title.content = "A canonical page";
         html.head.meta.x-ua-compat = false;
         html.head.link.canonical = {
           href = "https://example.com/page";
@@ -276,7 +276,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Base element";
+        html.head.title.content = "Base element";
         html.head.meta.x-ua-compat = false;
         html.head.base = {
           href = "https://example.com";
@@ -337,7 +337,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Details";
+        html.head.title.content = "Details";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -370,7 +370,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Details";
+        html.head.title.content = "Details";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -406,7 +406,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "dt element content";
+        html.head.title.content = "dt element content";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -414,12 +414,12 @@ in
               {
                 terms = [
                   {
-                    dt = {
+                    content = {
                       p.content = "a term";
                     };
                   }
                 ];
-                descriptions = [ { dd = "a description"; } ];
+                descriptions = [ { content = "a description"; } ];
               }
             ];
           }
@@ -452,7 +452,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "div element";
+        html.head.title.content = "div element";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -484,7 +484,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "span element";
+        html.head.title.content = "span element";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -516,7 +516,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Code element";
+        html.head.title.content = "Code element";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -548,7 +548,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Unordered list";
+        html.head.title.content = "Unordered list";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -588,7 +588,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Ordered list";
+        html.head.title.content = "Ordered list";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -628,7 +628,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "List item with flow content";
+        html.head.title.content = "List item with flow content";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -666,13 +666,13 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Simple table";
+        html.head.title.content = "Simple table";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
             table.body = [
               {
-                rows = [
+                content = [
                   { content = [ { td.content = "cell"; } ]; }
                 ];
               }
@@ -704,12 +704,12 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Table with head";
+        html.head.title.content = "Table with head";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
             table = {
-              head.rows = [
+              head.content = [
                 {
                   content = [
                     { th.content = "Name"; }
@@ -719,7 +719,7 @@ in
               ];
               body = [
                 {
-                  rows = [
+                  content = [
                     {
                       content = [
                         { td.content = "foo"; }
@@ -770,14 +770,14 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "tbody with attrs";
+        html.head.title.content = "tbody with attrs";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
             table.body = [
               {
                 attrs = { };
-                rows = [
+                content = [
                   { content = [ { td.content = "cell"; } ]; }
                 ];
               }
@@ -811,7 +811,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Table with caption";
+        html.head.title.content = "Table with caption";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -819,7 +819,7 @@ in
               caption.content = "My Table";
               body = [
                 {
-                  rows = [
+                  content = [
                     { content = [ { td.content = "data"; } ]; }
                   ];
                 }
@@ -855,19 +855,19 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Table with foot";
+        html.head.title.content = "Table with foot";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
             table = {
               body = [
                 {
-                  rows = [
+                  content = [
                     { content = [ { td.content = "data"; } ]; }
                   ];
                 }
               ];
-              foot.rows = [
+              foot.content = [
                 { content = [ { td.content = "total"; } ]; }
               ];
             };
@@ -905,13 +905,13 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Table cell attributes";
+        html.head.title.content = "Table cell attributes";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
             table.body = [
               {
-                rows = [
+                content = [
                   {
                     content = [
                       { td = { attrs.colspan = 2; content = "wide"; }; }
@@ -961,7 +961,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Table with colgroup";
+        html.head.title.content = "Table with colgroup";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -976,7 +976,7 @@ in
               ];
               body = [
                 {
-                  rows = [
+                  content = [
                     {
                       content = [
                         { td.content = "a"; }
@@ -1025,12 +1025,12 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Table with scoped headers";
+        html.head.title.content = "Table with scoped headers";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
             table = {
-              head.rows = [
+              head.content = [
                 {
                   content = [
                     { th = { attrs.scope = "col"; content = "Name"; }; }
@@ -1039,7 +1039,7 @@ in
               ];
               body = [
                 {
-                  rows = [
+                  content = [
                     { content = [ { td.content = "Alice"; } ]; }
                   ];
                 }
@@ -1079,7 +1079,7 @@ in
     input =
       { ... }:
       {
-        html.head.title.text = "Code with phrasing content";
+        html.head.title.content = "Code with phrasing content";
         html.head.meta.x-ua-compat = false;
         html.body.content = [
           {
@@ -1114,6 +1114,119 @@ in
               </a>
             </code>
           </p>
+        </body>
+      </html>
+    '';
+  };
+  test-content-coercion = rec {
+    input =
+      { ... }:
+      {
+        html.head.title = "Content coercion";
+        html.head.meta.x-ua-compat = false;
+        html.body.content = [
+          { p = "plain paragraph"; }
+          {
+            p.content = [
+              { span = "inline span"; }
+              { code = "inline code"; }
+              { a = "bare link"; }
+            ];
+          }
+          { ul.content = [ "first" "second" ]; }
+          {
+            dl.content = [
+              {
+                terms = [ "a term" ];
+                descriptions = [ "a description" ];
+              }
+            ];
+          }
+          {
+            details = {
+              summary = "click to expand";
+              content = [ { p = "revealed"; } ];
+            };
+          }
+          {
+            table = {
+              caption = "my table";
+              body = [
+                {
+                  content = [
+                    {
+                      content = [
+                        { th = "header"; }
+                        { td = "cell"; }
+                      ];
+                    }
+                  ];
+                }
+              ];
+            };
+          }
+        ];
+      };
+    expr = html input;
+    expected = ''
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Content coercion</title>
+        </head>
+        <body>
+          <p>
+            plain paragraph
+          </p>
+          <p>
+            <span>
+              inline span
+            </span>
+            <code>
+              inline code
+            </code>
+            <a>
+              bare link
+            </a>
+          </p>
+          <ul>
+            <li>
+              first
+            </li>
+            <li>
+              second
+            </li>
+          </ul>
+          <dl>
+            <dt>
+              a term
+            </dt>
+            <dd>
+              a description
+            </dd>
+          </dl>
+          <details>
+            <summary>
+              click to expand
+            </summary>
+            <p>
+              revealed
+            </p>
+          </details>
+          <table>
+            <caption>
+              my table
+            </caption>
+            <tr>
+              <th>
+                header
+              </th>
+              <td>
+                cell
+              </td>
+            </tr>
+          </table>
         </body>
       </html>
     '';

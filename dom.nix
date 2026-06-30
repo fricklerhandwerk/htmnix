@@ -62,8 +62,40 @@ let
         }>";
     };
 
+  # elements where a bare string coerces to { content = s; }
+  content-coercible = [
+    "title"
+    "p"
+    "a"
+    "code"
+    "span"
+    "li"
+    "dt"
+    "dd"
+    "td"
+    "th"
+    "summary"
+    "caption"
+  ];
+
+  element-with-content =
+    element:
+    let
+      content-type =
+        (element {
+          name = "dummy";
+          config = { };
+        }).options.content.type;
+    in
+    types.coercedTo content-type (v: { content = v; }) (submodule element);
+
   # options with types for all the defined DOM elements
-  element-types = lib.mapAttrs (_name: value: mkOption { type = submodule value; }) elements;
+  element-types = lib.mapAttrs (
+    name: value:
+    mkOption {
+      type = if lib.elem name content-coercible then element-with-content value else submodule value;
+    }
+  ) elements;
 
   # attrset of categories, where values are module options with the type of the
   # elements that belong to these categories
@@ -71,7 +103,13 @@ let
     with lib;
     genAttrs content-categories (
       category:
-      (mapAttrs (_: e: mkOption { type = submodule e; })
+      (mapAttrs
+        (
+          name: e:
+          mkOption {
+            type = if elem name content-coercible then element-with-content e else submodule e;
+          }
+        )
         # HACK: don't evaluate the submodule types, just grab the config directly
         # TODO: we may want to do this properly and loop `categories` through the top-level `config`
         (
@@ -458,11 +496,11 @@ let
       {
         imports = [ element ];
         options.attrs = mkAttrs { };
-        options.text = mkOption {
+        options.content = mkOption {
           type = types.str;
         };
         config.categories = [ "metadata" ];
-        config.__toString = self: "<${name}${print-attrs self.attrs}>${self.text}</${name}>";
+        config.__toString = self: "<${name}${print-attrs self.attrs}>${self.content}</${name}>";
 
       };
 
@@ -885,14 +923,14 @@ let
                         default = [ ];
                       };
                       terms = mkOption {
-                        type = with types; nonEmptyListOf (submodule dt);
+                        type = with types; nonEmptyListOf (element-with-content dt);
                       };
                       between = mkOption {
                         type = with types; listOf (attrTag categories.scripting);
                         default = [ ];
                       };
                       descriptions = mkOption {
-                        type = with types; nonEmptyListOf (submodule dd);
+                        type = with types; nonEmptyListOf (element-with-content dd);
                       };
                       after = mkOption {
                         type = with types; listOf (attrTag categories.scripting);
@@ -940,7 +978,7 @@ let
         imports = [ element ];
         options = {
           attrs = mkAttrs { };
-          dt = mkOption {
+          content = mkOption {
             type =
               with types;
               either str (
@@ -960,7 +998,7 @@ let
           };
         };
         config.categories = [ ];
-        config.__toString = self: with lib; print-element "dt" self.attrs (toString-unwrap self.dt);
+        config.__toString = self: with lib; print-element "dt" self.attrs (toString-unwrap self.content);
       };
 
     dd =
@@ -969,12 +1007,12 @@ let
         imports = [ element ];
         options = {
           attrs = mkAttrs { };
-          dd = mkOption {
-            type = with types; either str (submodule (attrTag categories.flow));
+          content = mkOption {
+            type = with types; either str (attrTag categories.flow);
           };
         };
         config.categories = [ ];
-        config.__toString = self: print-element "dd" self.attrs self.dd;
+        config.__toString = self: with lib; print-element "dd" self.attrs (toString-unwrap self.content);
       };
 
     # https://html.spec.whatwg.org/multipage/interactive-elements.html#the-summary-element
@@ -1006,7 +1044,7 @@ let
             };
           };
           summary = mkOption {
-            type = with types; nullOr (submodule summary);
+            type = with types; nullOr (element-with-content summary);
             default = null;
           };
           content = mkOption {
@@ -1094,7 +1132,7 @@ let
         options = {
           attrs = mkAttrs { };
           content = mkOption {
-            type = with types; listOf (submodule li);
+            type = with types; listOf (element-with-content li);
             default = [ ];
           };
         };
@@ -1135,7 +1173,7 @@ let
             };
           };
           content = mkOption {
-            type = with types; listOf (submodule li);
+            type = with types; listOf (element-with-content li);
             default = [ ];
           };
         };
@@ -1322,14 +1360,14 @@ let
         imports = [ element ];
         options = {
           attrs = mkAttrs { };
-          rows = mkOption {
+          content = mkOption {
             type = with types; listOf (submodule tr);
             default = [ ];
           };
         };
         config.categories = [ ];
         config.__toString =
-          self: with lib; print-element "thead" self.attrs (join "\n" (map toString self.rows));
+          self: with lib; print-element "thead" self.attrs (join "\n" (map toString self.content));
       };
 
     # https://html.spec.whatwg.org/multipage/tables.html#the-tbody-element
@@ -1346,7 +1384,7 @@ let
               });
             default = null;
           };
-          rows = mkOption {
+          content = mkOption {
             type = with types; listOf (submodule tr);
             default = [ ];
           };
@@ -1356,9 +1394,9 @@ let
           self:
           with lib;
           let
-            content = join "\n" (map toString self.rows);
+            rows = join "\n" (map toString self.content);
           in
-          if !isNull self.attrs then print-element "tbody" self.attrs content else content;
+          if !isNull self.attrs then print-element "tbody" self.attrs rows else rows;
       };
 
     # https://html.spec.whatwg.org/multipage/tables.html#the-tfoot-element
@@ -1368,14 +1406,14 @@ let
         imports = [ element ];
         options = {
           attrs = mkAttrs { };
-          rows = mkOption {
+          content = mkOption {
             type = with types; listOf (submodule tr);
             default = [ ];
           };
         };
         config.categories = [ ];
         config.__toString =
-          self: with lib; print-element "tfoot" self.attrs (join "\n" (map toString self.rows));
+          self: with lib; print-element "tfoot" self.attrs (join "\n" (map toString self.content));
       };
 
     # https://html.spec.whatwg.org/multipage/tables.html#the-caption-element
@@ -1404,7 +1442,7 @@ let
         options = {
           attrs = mkAttrs { };
           caption = mkOption {
-            type = with types; nullOr (submodule caption);
+            type = with types; nullOr (element-with-content caption);
             default = null;
           };
           colgroups = mkOption {
